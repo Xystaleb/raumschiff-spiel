@@ -14,7 +14,7 @@ var maxEnemies = 10;
 // Zähler für die erzeugten Gegner
 var enemyCount = 0;
 
-
+var keys = {};
 
 function createSpaceship() {
   spaceship.element = document.createElement('div');
@@ -97,7 +97,7 @@ function gameLoop() {
   moveEnemies();
 
   // Kollisionsprüfung
-  checkCollision();
+  checkCollisions();
 
   // Spiel-Loop wiederholen
   requestAnimationFrame(gameLoop);
@@ -105,9 +105,18 @@ function gameLoop() {
 
 // Funktion zum Bewegen des Raumschiffs
 function moveSpaceship() {
-  spaceship.y += spaceshipMovement * 5; // Geschwindigkeit der Bewegung anpassen
+  // Überprüfe den Zustand der Tastatureingaben
+  if (keys.ArrowUp) {
+    spaceship.y -= spaceshipSpeed;
+  }
+  if (keys.ArrowDown) {
+    spaceship.y += spaceshipSpeed;
+  }
+
+  // Aktualisiere die Position des Raumschiffs im DOM
   spaceship.element.style.top = spaceship.y + 'px';
 }
+
 
 // Funktion zur Erzeugung von Gegnern
 function createEnemy() {
@@ -123,7 +132,7 @@ function createEnemy() {
     while (!validPosition) {
       top = Math.floor(Math.random() * (gameArea.height - 50));
       left = gameArea.width - 50;
-      validPosition = checkCollision(top, left);
+      validPosition = checkCollisions(top, left);
     }
 
     enemy.style.top = top + 'px';
@@ -157,7 +166,7 @@ function moveEnemies() {
 
 
 // Funktion zur Kollisionsprüfung
-function checkCollision(top, left) {
+function checkCollisions(top, left) {
   for (var i = 0; i < enemies.length; i++) {
     var enemy = enemies[i];
     var enemyTop = parseInt(enemy.style.top);
@@ -177,18 +186,15 @@ function checkCollision(top, left) {
 }
 
 // Event-Handler für Tastatureingaben
+
+
+// Event-Handler für Tastatur-Eingabe
 function handleKeyDown(event) {
-  if (event.key === 'ArrowUp' || event.key === 'w') {
-    spaceshipMovement = -1; // Bewegung nach oben
-  } else if (event.key === 'ArrowDown' || event.key === 's') {
-    spaceshipMovement = 1; // Bewegung nach unten
-  }
+  keys[event.key] = true;
 }
 
 function handleKeyUp(event) {
-  if (event.key === 'ArrowUp' || event.key === 'ArrowDown' || event.key === 'w' || event.key === 's') {
-    spaceshipMovement = 0; // Bewegung stoppen
-  }
+  keys[event.key] = false;
 }
 
 // Das Spiel initialisieren, wenn das Dokument vollständig geladen ist
