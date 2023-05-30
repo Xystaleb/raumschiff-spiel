@@ -6,7 +6,7 @@ var spaceship = {
   height: 50
 };
 
-var spaceshipMovement = 5;
+var spaceshipSpeed = 5;
 
 // Maximale Anzahl der Gegner pro Level
 var maxEnemies = 10;
@@ -90,8 +90,7 @@ function initGame() {
   document.addEventListener("keyup", handleKeyUp);
 
   // Beispiel für die Erzeugung eines Gegners alle 2 Sekunden
-  setInterval(createEnemy, 2000);
-
+  setInterval(createEnemy, 400);
   // Spiel-Loop starten
   gameLoop();
 }
@@ -115,12 +114,13 @@ function gameLoop() {
 function moveSpaceship() {
   if (keys['ArrowUp']) {
     // Bewegungslogik für nach oben
-    spaceship.y -= spaceshipMovement;
+    spaceship.y -= spaceshipSpeed;
   }
   if (keys['ArrowDown']) {
     // Bewegungslogik für nach unten
-    spaceship.y += spaceshipMovement;
+    spaceship.y += spaceshipSpeed;
   }
+  spaceship.element.style.top = spaceship.y + 'px';
 }
 
 // Funktion zum Bewegen der Gegner
@@ -167,13 +167,9 @@ function rectIntersect(r1, r2) {
   );
 }
 
-document.addEventListener("keydown", function(event) {
-  keys[event.key] = true;
-});
+document.addEventListener("keydown", handleKeyDown);
 
-document.addEventListener("keyup", function(event) {
-  keys[event.key] = false;
-});
+document.addEventListener("keyup", handleKeyUp);
 
 // Das Spiel initialisieren, wenn das Dokument vollständig geladen ist
 window.addEventListener("load", initGame);
