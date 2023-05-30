@@ -97,7 +97,7 @@ function gameLoop() {
   moveEnemies();
 
   // Kollisionsprüfung
-  checkCollisions();
+  checkCollision();
 
   // Spiel-Loop wiederholen
   requestAnimationFrame(gameLoop);
