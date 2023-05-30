@@ -115,17 +115,17 @@ function createEnemy() {
     var enemy = document.createElement('div');
     enemy.className = 'enemy';
     enemy.style.position = 'absolute';
-    
+
     var validPosition = false;
     var top, left;
-    
+
     // Überprüfe, ob die generierte Position mit vorhandenen Gegnern kollidiert
     while (!validPosition) {
       top = Math.floor(Math.random() * (gameArea.height - 50));
-      left = Math.floor(Math.random() * (gameArea.width - 50));
+      left = gameArea.width - 50;
       validPosition = checkCollision(top, left);
     }
-    
+
     enemy.style.top = top + 'px';
     enemy.style.left = left + 'px';
     enemy.style.width = '50px';
@@ -136,20 +136,21 @@ function createEnemy() {
   }
 }
 
+
 // Funktion zum Bewegen der Gegner
 function moveEnemies() {
   for (var i = 0; i < enemies.length; i++) {
     var enemy = enemies[i];
     var currentLeft = parseInt(enemy.style.left);
-    if (currentLeft <= -50) {
-      // Gegner außerhalb des Bildschirms, entfernen
-      document.body.removeChild(enemy);
-      enemies.splice(i, 1);
-      i--;
+    var newLeft = currentLeft - enemySpeed;
+    enemy.style.left = newLeft + 'px';
+
+    // Überprüfe, ob der Gegner den linken Rand des Spielfelds erreicht hat
+    if (newLeft <= 0) {
+      enemy.parentNode.removeChild(enemy); // Entferne den Gegner aus dem DOM
+      enemies.splice(i, 1); // Entferne den Gegner aus dem enemies-Array
       enemyCount--; // Verringere den Zähler für die erzeugten Gegner
-    } else {
-      // Gegner nach links bewegen
-      enemy.style.left = currentLeft - 5 + 'px'; // Ändere die Geschwindigkeit bei Bedarf
+      i--; // Verringere den Index, da ein Element aus dem Array entfernt wurde
     }
   }
 }
