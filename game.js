@@ -100,23 +100,20 @@ function gameLoop() {
   checkCollisions();
 
   // Spiel-Loop wiederholen
-  requestAnimationFrame(gameLoop);
+  requestAnimationFrame(gameLoop,60);
 }
 
 // Funktion zum Bewegen des Raumschiffs
 function moveSpaceship() {
-  // Überprüfe den Zustand der Tastatureingaben
-  if (keys.ArrowUp) {
+  if (keys['ArrowUp']) {
+    // Bewegungslogik für nach oben
     spaceship.y -= spaceshipSpeed;
   }
-  if (keys.ArrowDown) {
+  if (keys['ArrowDown']) {
+    // Bewegungslogik für nach unten
     spaceship.y += spaceshipSpeed;
   }
-
-  // Aktualisiere die Position des Raumschiffs im DOM
-  spaceship.element.style.top = spaceship.y + 'px';
 }
-
 
 // Funktion zur Erzeugung von Gegnern
 function createEnemy() {
@@ -185,17 +182,14 @@ function checkCollisions(top, left) {
   return true; // Keine Kollisionen gefunden, Position ist gültig
 }
 
-// Event-Handler für Tastatureingaben
 
-
-// Event-Handler für Tastatur-Eingabe
-function handleKeyDown(event) {
+document.addEventListener("keydown", function(event) {
   keys[event.key] = true;
-}
+});
 
-function handleKeyUp(event) {
+document.addEventListener("keyup", function(event) {
   keys[event.key] = false;
-}
+});
 
 // Das Spiel initialisieren, wenn das Dokument vollständig geladen ist
 window.addEventListener("load", initGame);
