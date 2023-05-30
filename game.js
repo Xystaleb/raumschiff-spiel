@@ -1,4 +1,3 @@
-
 var spaceship = {
   element: null,
   x: 0,
@@ -7,7 +6,7 @@ var spaceship = {
   height: 50
 };
 
-var spaceshipMovement = 0;
+var spaceshipMovement = 5;
 
 // Maximale Anzahl der Gegner pro Level
 var maxEnemies = 10;
@@ -15,6 +14,19 @@ var maxEnemies = 10;
 var enemyCount = 0;
 
 var keys = {};
+
+var enemyWidth = 50; // Beispielwert, ersetze ihn mit deiner gewünschten Breite für die Gegner
+var enemyHeight = 50; // Beispielwert, ersetze ihn mit deiner gewünschten Breite für die Gegner
+var enemySpeed = 5;
+
+function handleKeyDown(event) {
+  keys[event.key] = true;
+}
+
+function handleKeyUp(event) {
+  keys[event.key] = false;
+}
+
 
 function createSpaceship() {
   spaceship.element = document.createElement('div');
@@ -38,22 +50,24 @@ function Enemy(x, y, speed) {
 }
 
 function createEnemy() {
-  var x = gameArea.width; // Startposition des Gegners (rechter Bildschirmrand)
-  var y = Math.random() * (gameArea.height - 50); // Zufällige y-Position des Gegners
-  var speed = Math.random() * 5 + 1; // Zufällige Geschwindigkeit des Gegners
-  var enemy = new Enemy(x, y, speed);
+  var x = gameArea.width - enemyWidth; // Startposition des Gegners (rechter Bildschirmrand)
+  var y = Math.random() * (gameArea.height - enemyHeight); // Zufällige y-Position des Gegners
+  var enemy = new Enemy(x, y, enemySpeed);
 
   var enemyElement = document.createElement('div');
   enemyElement.className = 'enemy';
   enemyElement.style.position = 'absolute';
   enemyElement.style.top = enemy.y + 'px';
   enemyElement.style.left = enemy.x + 'px';
+  enemyElement.style.width = enemyWidth + 'px';
+  enemyElement.style.height = enemyHeight + 'px';
   // Weitere Stilzuweisungen für den Gegner können hier erfolgen
 
   enemy.element = enemyElement;
   document.body.appendChild(enemyElement);
 
   enemies.push(enemy); // Gegner zum enemies-Array hinzufügen
+  enemyCount++; // Erhöhe den Zähler für die erzeugten Gegner
 }
 
 // Gegner-Array
@@ -78,20 +92,14 @@ function initGame() {
   // Beispiel für die Erzeugung eines Gegners alle 2 Sekunden
   setInterval(createEnemy, 2000);
 
-
   // Spiel-Loop starten
   gameLoop();
 }
-
-
 
 // Funktion für den Spiel-Loop
 function gameLoop() {
   // Raumschiff bewegen
   moveSpaceship();
-
-  // Gegner erzeugen
-  createEnemy();
 
   // Gegner bewegen
   moveEnemies();
@@ -100,60 +108,32 @@ function gameLoop() {
   checkCollisions();
 
   // Spiel-Loop wiederholen
-  requestAnimationFrame(gameLoop,60);
+  requestAnimationFrame(gameLoop);
 }
 
 // Funktion zum Bewegen des Raumschiffs
 function moveSpaceship() {
   if (keys['ArrowUp']) {
     // Bewegungslogik für nach oben
-    spaceship.y -= spaceshipSpeed;
+    spaceship.y -= spaceshipMovement;
   }
   if (keys['ArrowDown']) {
     // Bewegungslogik für nach unten
-    spaceship.y += spaceshipSpeed;
+    spaceship.y += spaceshipMovement;
   }
 }
-
-// Funktion zur Erzeugung von Gegnern
-function createEnemy() {
-  if (enemyCount < maxEnemies) {
-    var enemy = document.createElement('div');
-    enemy.className = 'enemy';
-    enemy.style.position = 'absolute';
-
-    var validPosition = false;
-    var top, left;
-
-    // Überprüfe, ob die generierte Position mit vorhandenen Gegnern kollidiert
-    while (!validPosition) {
-      top = Math.floor(Math.random() * (gameArea.height - 50));
-      left = gameArea.width - 50;
-      validPosition = checkCollisions(top, left);
-    }
-
-    enemy.style.top = top + 'px';
-    enemy.style.left = left + 'px';
-    enemy.style.width = '50px';
-    enemy.style.height = '50px';
-    document.body.appendChild(enemy);
-    enemies.push(enemy);
-    enemyCount++; // Erhöhe den Zähler für die erzeugten Gegner
-  }
-}
-
 
 // Funktion zum Bewegen der Gegner
 function moveEnemies() {
   for (var i = 0; i < enemies.length; i++) {
     var enemy = enemies[i];
-    var currentLeft = parseInt(enemy.style.left);
-    var newLeft = currentLeft - enemySpeed;
-    enemy.style.left = newLeft + 'px';
+    var currentLeft = parseInt(enemy.element.style.left);
+    var newLeft = currentLeft - enemy.speed;
+    enemy.element.style.left = newLeft + 'px';
 
     // Überprüfe, ob der Gegner den linken Rand des Spielfelds erreicht hat
     if (newLeft <= 0) {
-      enemy.parentNode.removeChild(enemy); // Entferne den Gegner aus dem DOM
+      enemy.element.parentNode.removeChild(enemy.element); // Entferne den Gegner aus dem DOM
       enemies.splice(i, 1); // Entferne den Gegner aus dem enemies-Array
       enemyCount--; // Verringere den Zähler für die erzeugten Gegner
       i--; // Verringere den Index, da ein Element aus dem Array entfernt wurde
@@ -161,27 +141,31 @@ function moveEnemies() {
   }
 }
 
-
 // Funktion zur Kollisionsprüfung
-function checkCollisions(top, left) {
+function checkCollisions() {
+  var spaceshipRect = spaceship.element.getBoundingClientRect();
+
   for (var i = 0; i < enemies.length; i++) {
     var enemy = enemies[i];
-    var enemyTop = parseInt(enemy.style.top);
-    var enemyLeft = parseInt(enemy.style.left);
-    
-    if (
-      top >= enemyTop - 50 &&
-      top <= enemyTop + 50 &&
-      left >= enemyLeft - 50 &&
-      left <= enemyLeft + 50
-    ) {
-      return false; // Kollision gefunden, Position ist ungültig
+    var enemyRect = enemy.element.getBoundingClientRect();
+
+    if (rectIntersect(spaceshipRect, enemyRect)) {
+      // Kollision zwischen Raumschiff und Gegner
+      // Hier kannst du deine gewünschte Logik für die Kollision implementieren
+      console.log('Kollision!');
     }
   }
-  
-  return true; // Keine Kollisionen gefunden, Position ist gültig
 }
 
+// Hilfsfunktion zur Überprüfung von Kollisionen zwischen zwei Rechtecken
+function rectIntersect(r1, r2) {
+  return (
+    r1.left < r2.right &&
+    r1.right > r2.left &&
+    r1.top < r2.bottom &&
+    r1.bottom > r2.top
+  );
+}
 
 document.addEventListener("keydown", function(event) {
   keys[event.key] = true;
