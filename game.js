@@ -6,12 +6,16 @@ var spaceship = {
   height: 50
 };
 
+var enemyInterval;
+
 var spaceshipSpeed = 5;
 
 // Maximale Anzahl der Gegner pro Level
 var maxEnemies = 10;
 // Zähler für die erzeugten Gegner
 var enemyCount = 0;
+
+var score = 30;
 
 var keys = {};
 
@@ -90,7 +94,7 @@ function initGame() {
   document.addEventListener("keyup", handleKeyUp);
 
   // Beispiel für die Erzeugung eines Gegners alle 2 Sekunden
-  setInterval(createEnemy, 400);
+  enemyInterval  = setInterval(createEnemy, 400);
   // Spiel-Loop starten
   gameLoop();
 }
@@ -153,8 +157,23 @@ function checkCollisions() {
       // Kollision zwischen Raumschiff und Gegner
       // Hier kannst du deine gewünschte Logik für die Kollision implementieren
       console.log('Kollision!');
+      endGame();
+      break; // Beende die Schleife, da das Spiel vorbei ist
     }
   }
+}
+
+function endGame() {
+  // Stoppe das Spiel, z.B. indem du den gameLoop beendest oder den Interval für die Gegnererzeugung stoppst
+  cancelAnimationFrame(animationId);
+  clearInterval(enemyInterval);
+
+  // Zeige den Highscore an
+  var scoreElement = document.createElement('div');
+  scoreElement.className = 'score';
+  scoreElement.innerHTML = 'Game Over! Dein Score: ' + score;
+  document.body.appendChild(scoreElement);
+
 }
 
 // Hilfsfunktion zur Überprüfung von Kollisionen zwischen zwei Rechtecken
