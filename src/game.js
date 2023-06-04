@@ -1,10 +1,12 @@
-var spaceship = {
-  element: null,
-  x: 0,
-  y: 0,
-  width: 50,
-  height: 50
-};
+import Ship from "./models/ship.js";
+import Enemy from "./models/enemy.js";
+
+var spaceship = new Ship(
+  0,
+  0,
+  50,
+  50
+);
 
 var enemyInterval;
 
@@ -29,19 +31,6 @@ function handleKeyDown(event) {
 
 function handleKeyUp(event) {
   keys[event.key] = false;
-}
-
-
-function createSpaceship() {
-  spaceship.element = document.createElement('div');
-  spaceship.element.className = 'spaceship';
-  spaceship.element.style.position = 'absolute';
-  spaceship.element.style.top = '200px';
-  spaceship.element.style.left = '50px';
-  spaceship.element.style.width = '50px';
-  spaceship.element.style.height = '50px';
-  // Weitere Stilzuweisungen für das Raumschiff können hier erfolgen
-  return spaceship.element;
 }
 
 // Enemy-Objekt
@@ -86,8 +75,9 @@ var gameArea = {
 // Funktion zum Initialisieren des Spiels
 function initGame() {
   // Raumschiff erstellen
-  spaceship.element = createSpaceship(); // Das Raumschiff-Element erstellen
-  document.body.appendChild(spaceship.element); // Das Raumschiff-Element der HTML-Seite hinzufügen
+  spaceship.element = spaceship.build(document); // Das Raumschiff-Element erstellen
+  spaceship.draw(document);
+  // document.body.appendChild(spaceship.element); // Das Raumschiff-Element der HTML-Seite hinzufügen
 
   // Event-Handler für Tastatureingaben registrieren
   document.addEventListener("keydown", handleKeyDown);
