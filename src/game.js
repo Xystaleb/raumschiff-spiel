@@ -1,21 +1,28 @@
 import Ship from "./models/ship.js";
 import Enemy from "./models/enemy.js";
+import Floor from "./models/floor.js";
+
+
+
+const BLOCK_WIDTH = 50;
+const BLOCK_HEIGHT = 50;
 
 var spaceship = new Ship(
   0,
   0,
-  50,
-  50
+  BLOCK_WIDTH,
+  BLOCK_HEIGHT
 );
 
-var enemyInterval;
 
 var spaceshipSpeed = 5;
+var enemySpeed = 5;
+
 
 // Maximale Anzahl der Gegner pro Level
-var maxEnemies = 10;
+
 // Zähler für die erzeugten Gegner
-var enemyCount = 0;
+
 
 var score = 30;
 
@@ -34,7 +41,7 @@ function handleKeyUp(event) {
 }
 
 // Enemy-Objekt
-function Enemy(x, y, speed) {
+function enemy(x, y, speed) {
   this.element = null;
   this.x = x;
   this.y = y;
@@ -42,10 +49,8 @@ function Enemy(x, y, speed) {
   // Weitere Eigenschaften des Gegners können hier hinzugefügt werden
 }
 
-function createEnemy() {
-  var x = gameArea.width - enemyWidth; // Startposition des Gegners (rechter Bildschirmrand)
-  var y = Math.random() * (gameArea.height - enemyHeight); // Zufällige y-Position des Gegners
-  var enemy = new Enemy(x, y, enemySpeed);
+function createEnemy(x, y) {
+  var enemy = new Enemy(x * BLOCK_WIDTH, y * BLOCK_WIDTH, enemySpeed);
 
   var enemyElement = document.createElement('div');
   enemyElement.className = 'enemy';
@@ -60,7 +65,15 @@ function createEnemy() {
   document.body.appendChild(enemyElement);
 
   enemies.push(enemy); // Gegner zum enemies-Array hinzufügen
-  enemyCount++; // Erhöhe den Zähler für die erzeugten Gegner
+}
+
+function createFloor(x, y, width, height) {
+  var floor = new Floor(x * BLOCK_WIDTH, y * BLOCK_HEIGHT, width * BLOCK_WIDTH, height * BLOCK_HEIGHT);
+  floor.element = floor.build(document)
+  floor.draw(document)
+
+  enemies.push(floor); // Gegner zum enemies-Array hinzufügen
+
 }
 
 // Gegner-Array
@@ -68,8 +81,8 @@ var enemies = [];
 
 // Spielfeld-Größe
 var gameArea = {
-  width: window.innerWidth,
-  height: window.innerHeight
+  width: 225 * BLOCK_WIDTH,
+  height: 5 * BLOCK_HEIGHT
 };
 
 // Funktion zum Initialisieren des Spiels
@@ -84,7 +97,7 @@ function initGame() {
   document.addEventListener("keyup", handleKeyUp);
 
   // Beispiel für die Erzeugung eines Gegners alle 2 Sekunden
-  enemyInterval  = setInterval(createEnemy, 400);
+  createLevelOne();
   // Spiel-Loop starten
   gameLoop();
 }
@@ -92,6 +105,7 @@ function initGame() {
 // Funktion für den Spiel-Loop
 function gameLoop() {
   // Raumschiff bewegen
+
   moveSpaceship();
 
   // Gegner bewegen
@@ -122,16 +136,8 @@ function moveEnemies() {
   for (var i = 0; i < enemies.length; i++) {
     var enemy = enemies[i];
     var currentLeft = parseInt(enemy.element.style.left);
-    var newLeft = currentLeft - enemy.speed;
+    var newLeft = currentLeft - enemySpeed;
     enemy.element.style.left = newLeft + 'px';
-
-    // Überprüfe, ob der Gegner den linken Rand des Spielfelds erreicht hat
-    if (newLeft <= 0) {
-      enemy.element.parentNode.removeChild(enemy.element); // Entferne den Gegner aus dem DOM
-      enemies.splice(i, 1); // Entferne den Gegner aus dem enemies-Array
-      enemyCount--; // Verringere den Zähler für die erzeugten Gegner
-      i--; // Verringere den Index, da ein Element aus dem Array entfernt wurde
-    }
   }
 }
 
@@ -182,3 +188,55 @@ document.addEventListener("keyup", handleKeyUp);
 
 // Das Spiel initialisieren, wenn das Dokument vollständig geladen ist
 window.addEventListener("load", initGame);
+
+function createBaum(x, y) {
+  for (y; y <= 15; y++) {
+    createEnemy(x, y)
+  }
+}
+
+function createEiszapfen(x, y) {
+  for (y; y >= 0; y--) {
+    createEnemy(x, y)
+  }
+}
+
+
+
+function createLevelOne() {
+  createFloor(15, 1, 35, 2)
+  createFloor(15, 15, 35, 2)
+  createBaum(17, 8);
+  createEiszapfen(25, 6)
+  createBaum(30, 9)
+  createEiszapfen(35, 5)
+
+  createEnemy(55,5)
+  createEnemy(55,8)
+  createEnemy(55,11)
+  createEnemy(55,2)
+  createEnemy(55,14)
+
+  createFloor(75, 1, 35, 2)
+  createFloor(75, 15, 35, 2)
+
+  createBaum(80,4)
+  createEiszapfen(100,12)
+
+
+ createEnemy(110,3)
+ createEnemy(111,4)
+ createEnemy(112,5)
+ createEnemy(113,6)
+ createEnemy(114,7)
+ createEnemy(115,8)
+  createEnemy(114,9)
+  createEnemy(113,10)
+  createEnemy(112,11)
+  createEnemy(111,12)
+  createEnemy(110,13)
+
+
+
+
+}
