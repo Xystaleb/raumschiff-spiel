@@ -121,12 +121,12 @@ function moveSpaceship() {
     // Bewegungslogik für nach unten
     spaceship.y += spaceshipSpeed;
   }
-  if (spaceship.y<=0){
-    spaceship.y=0
+  if (spaceship.y <= 0) {
+    spaceship.y = 0
   }
 
-  if (spaceship.y>=BLOCK_HEIGHT*13){
-    spaceship.y=BLOCK_HEIGHT*14
+  if (spaceship.y >= BLOCK_HEIGHT * 13) {
+    spaceship.y = BLOCK_HEIGHT * 14
   }
   spaceship.element.style.top = spaceship.y + 'px';
 }
@@ -189,50 +189,50 @@ document.addEventListener("keyup", handleKeyUp);
 // Das Spiel initialisieren, wenn das Dokument vollständig geladen ist
 window.addEventListener("load", initGame);
 
-function createBaum(x, y) {
-  for (y; y <= 15; y++) {
-    createEnemy(x, y)
-  }
-}
 
-function createEiszapfen(x, y) {
-  for (y; y >= 0; y--) {
-    createEnemy(x, y)
-  }
-}
 
 
 
 function createLevelOne() {
+
+
+  createWall(1,14,1,1)
+
+  //boden und decke
   createWall(15, 0, 35, 2)
   createWall(15, 13, 35, 2)
-  createWall(17,8,1,8)
-  createWall(25,0,1,6)  
-  createWall(30,9,1,9)
-  createWall(35,0,1,5)
-  createWall(80,4,1,12)
-  createWall(100,0,1,11)
-
-  createEnemy(55,5)
-  createEnemy(55,8)
-  createEnemy(55,11)
-  createEnemy(55,2)
-  createEnemy(55,14)
-
   createWall(75, 0, 35, 2)
   createWall(75, 13, 35, 2)
 
- createEnemy(110,3)
- createEnemy(111,4)
- createEnemy(112,5)
- createEnemy(113,6)
- createEnemy(114,7)
- createEnemy(115,8)
-  createEnemy(114,9)
-  createEnemy(113,10)
-  createEnemy(112,11)
-  createEnemy(111,12)
-  createEnemy(110,13)
+
+  //wände
+  createWall(17, 8, 1, 8)
+  createWall(25, 0, 1, 6)
+  createWall(30, 9, 1, 9)
+  createWall(35, 0, 1, 5)
+  createWall(80, 4, 1, 12)
+  createWall(100, 0, 1, 11)
+
+  //einzelne unzerstöbare gegner
+  createEnemy(55, 5)
+  createEnemy(55, 8)
+  createEnemy(55, 11)
+  createEnemy(55, 2)
+  createEnemy(55, 14)
+
+  createEnemy(110, 3)
+  createEnemy(111, 4)
+  createEnemy(112, 5)
+  createEnemy(113, 6)
+  createEnemy(114, 7)
+  createEnemy(115, 8)
+  createEnemy(114, 9)
+  createEnemy(113, 10)
+  createEnemy(112, 11)
+  createEnemy(111, 12)
+  createEnemy(110, 13)
+
+  
 
 
 
