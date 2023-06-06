@@ -7,13 +7,12 @@ export default class Ship extends GameObject {
 
   build(document){
     this.element = document.createElement("div");
-    // this.element.class = "spaceship"
     this.element.className = 'spaceship';
     this.element.style.position = 'absolute';
-    this.element.style.top = '200px';
-    this.element.style.left = '50px';
-    this.element.style.width = '50px';
-    this.element.style.height = '50px';
+    this.element.style.top = this.y+'px';
+    this.element.style.left = this.x+'px';
+    this.element.style.width = this.width+'px' ;
+    this.element.style.height = this.height+'px';
 
     return this.element;
   }

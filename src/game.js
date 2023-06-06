@@ -3,19 +3,19 @@ import Enemy from "./models/enemy.js";
 import { Wall } from "./models/wall.js";
 
 
-
+var gameover = false
 const BLOCK_WIDTH = 50;
 const BLOCK_HEIGHT = 50;
 
 var spaceship = new Ship(
-  0,
-  0,
+  BLOCK_WIDTH,
+  8 * BLOCK_HEIGHT,
   BLOCK_WIDTH,
   BLOCK_HEIGHT
 );
 
 
-var spaceshipSpeed = 5;
+var spaceshipSpeed = 10;
 var enemySpeed = 5;
 
 
@@ -28,9 +28,7 @@ var score = 30;
 
 var keys = {};
 
-var enemyWidth = 50; // Beispielwert, ersetze ihn mit deiner gewünschten Breite für die Gegner
-var enemyHeight = 50; // Beispielwert, ersetze ihn mit deiner gewünschten Breite für die Gegner
-var enemySpeed = 5;
+var enemySpeed = 3;
 
 function handleKeyDown(event) {
   keys[event.key] = true;
@@ -42,20 +40,11 @@ function handleKeyUp(event) {
 
 
 
+
 function createEnemy(x, y) {
-  var enemy = new Enemy(x * BLOCK_WIDTH, y * BLOCK_WIDTH, enemySpeed);
-
-  var enemyElement = document.createElement('div');
-  enemyElement.className = 'enemy';
-  enemyElement.style.position = 'absolute';
-  enemyElement.style.top = enemy.y + 'px';
-  enemyElement.style.left = enemy.x + 'px';
-  enemyElement.style.width = enemyWidth + 'px';
-  enemyElement.style.height = enemyHeight + 'px';
-  // Weitere Stilzuweisungen für den Gegner können hier erfolgen
-
-  enemy.element = enemyElement;
-  document.body.appendChild(enemyElement);
+  var enemy = new Enemy(x * BLOCK_WIDTH, y * BLOCK_WIDTH);
+  enemy.element = enemy.build(document)
+  enemy.draw(document)
 
   enemies.push(enemy); // Gegner zum enemies-Array hinzufügen
 }
@@ -90,7 +79,7 @@ function initGame() {
   document.addEventListener("keyup", handleKeyUp);
 
   // Beispiel für die Erzeugung eines Gegners alle 2 Sekunden
-  createLevelOne();
+  createTutorialLevel();
   // Spiel-Loop starten
   gameLoop();
 }
@@ -108,7 +97,8 @@ function gameLoop() {
   checkCollisions();
 
   // Spiel-Loop wiederholen
-  requestAnimationFrame(gameLoop);
+  if (!gameover)
+    requestAnimationFrame(gameLoop);
 }
 
 // Funktion zum Bewegen des Raumschiffs
@@ -121,13 +111,33 @@ function moveSpaceship() {
     // Bewegungslogik für nach unten
     spaceship.y += spaceshipSpeed;
   }
+
+  if (keys['ArrowLeft']) {
+    // Bewegungslogik für nach oben
+    spaceship.x -= spaceshipSpeed;
+  }
+  if (keys['ArrowRight']) {
+    // Bewegungslogik für nach unten
+    spaceship.x += spaceshipSpeed;
+  }
+
+  if (spaceship.x <= 0) {
+    spaceship.x = 0
+  }
+
+  if (spaceship.x >= BLOCK_WIDTH*30) {
+    spaceship.x = BLOCK_WIDTH*30
+  }
+
   if (spaceship.y <= 0) {
     spaceship.y = 0
   }
 
-  if (spaceship.y >= BLOCK_HEIGHT * 13) {
-    spaceship.y = BLOCK_HEIGHT * 14
+  if (spaceship.y >= BLOCK_HEIGHT * 15) {
+    spaceship.y = BLOCK_HEIGHT * 15
   }
+
+  spaceship.element.style.left = spaceship.x + 'px';
   spaceship.element.style.top = spaceship.y + 'px';
 }
 
@@ -161,15 +171,22 @@ function checkCollisions() {
 
 function endGame() {
   // Stoppe das Spiel, z.B. indem du den gameLoop beendest oder den Interval für die Gegnererzeugung stoppst
-  cancelAnimationFrame(animationId);
-  clearInterval(enemyInterval);
+
 
   // Zeige den Highscore an
   var scoreElement = document.createElement('div');
   scoreElement.className = 'score';
   scoreElement.innerHTML = 'Game Over! Dein Score: ' + score;
-  document.body.appendChild(scoreElement);
 
+  var reloadButton = document.createElement('button');
+  reloadButton.textContent = 'New Game!';
+  reloadButton.addEventListener('click', function () {
+    location.reload();
+  });
+
+  scoreElement.appendChild(reloadButton);
+  document.body.appendChild(scoreElement);
+  gameOver = true
 }
 
 // Hilfsfunktion zur Überprüfung von Kollisionen zwischen zwei Rechtecken
@@ -182,9 +199,7 @@ function rectIntersect(r1, r2) {
   );
 }
 
-document.addEventListener("keydown", handleKeyDown);
 
-document.addEventListener("keyup", handleKeyUp);
 
 // Das Spiel initialisieren, wenn das Dokument vollständig geladen ist
 window.addEventListener("load", initGame);
@@ -192,17 +207,40 @@ window.addEventListener("load", initGame);
 
 
 
+function createTutorialLevel() {
+
+  //boden und decke
+  createWall(0, 0, 50, 2)
+  createWall(0, 14, 50, 2)
+
+  //Wände
+
+  createWall(15, 0, 1, 7)
+  createWall(30, 6, 1, 8)
+  createWall(40, 0, 1, 10)
+  createWall(40, 9, 6, 1)
+  createWall(49, 5, 1, 10)
+  createWall(44, 5, 6, 1)
+
+  //gegner
+
+
+
+
+
+}
+
 
 function createLevelOne() {
 
 
-  createWall(1,14,1,1)
+
 
   //boden und decke
   createWall(15, 0, 35, 2)
-  createWall(15, 13, 35, 2)
+  createWall(15, 14, 35, 2)
   createWall(75, 0, 35, 2)
-  createWall(75, 13, 35, 2)
+  createWall(75, 14, 35, 2)
 
 
   //wände
@@ -232,7 +270,7 @@ function createLevelOne() {
   createEnemy(111, 12)
   createEnemy(110, 13)
 
-  
+
 
 
 
