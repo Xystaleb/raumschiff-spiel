@@ -3,6 +3,7 @@ import Enemy from "./models/enemy.js";
 import GameArea from "./models/gameArea.js";
 import Asteroid from "./models/astroids.js";
 import Wall from "./models/wall.js";
+import GameEvent from "./models/gameEvent.js";
 
 
 var gameover = false
@@ -29,6 +30,8 @@ var enemySpeed = 5;
 
 // Zähler für die erzeugten Gegner
 
+var eventInterval;
+
 
 var score = 30;
 
@@ -45,10 +48,20 @@ function handleKeyUp(event) {
 }
 
 function launchAsteroids(){
-  setInterval(createAstroid(),300)
+  eventInterval=setInterval(createAstroid,300)
 }
 
 var gameEvents= [];
+
+function createEvent (x,y,height,funktion) {
+
+  var gameEvent = new GameEvent(x*BLOCK_WIDTH, y,1,height*BLOCK_HEIGHT,funktion);
+  gameEvent.element = gameEvent.build(CAMERA)
+  gameEvent.draw(CAMERA)
+
+  gameEvents.push(gameEvent); // Gegner zum walls-Array hinzufügen
+
+}
 
 var asteroids=[];
 
@@ -117,6 +130,8 @@ function gameLoop() {
   // Gegner bewegen
   moveWall();
 
+  moveEvents()
+
   moveAsteroids();
 
   // Kollisionsprüfung
@@ -126,6 +141,8 @@ function gameLoop() {
   if (!gameover)
     requestAnimationFrame(gameLoop);
 }
+
+
 
 // Funktion zum Bewegen des Raumschiffs
 function moveSpaceship() {
@@ -167,13 +184,24 @@ function moveSpaceship() {
   spaceship.element.style.top = spaceship.y + 'px';
 }
 
+
+function moveEvents() {
+for (var i = 0; i < gameEvents.length; i++) {
+  var event = gameEvents[i];
+  var currentLeft = parseInt(event.element.style.left);
+  var newLeft = currentLeft - enemySpeed;
+  event.element.style.left = newLeft + 'px';
+}
+}
+
+
 // Funktion zum Bewegen der Gegner
 function moveWall() {
   for (var i = 0; i < walls.length; i++) {
-    var enemy = walls[i];
-    var currentLeft = parseInt(enemy.element.style.left);
+    var wall = walls[i];
+    var currentLeft = parseInt(wall.element.style.left);
     var newLeft = currentLeft - enemySpeed;
-    enemy.element.style.left = newLeft + 'px';
+    wall.element.style.left = newLeft + 'px';
   }
 }
 
@@ -220,9 +248,8 @@ function eventCollision(spaceshipRect, array) {
 
     if (intersect(spaceshipRect, elementRect)) {
       // Kollision zwischen Raumschiff und Gegner
+      element.funktion()
       console.log('Finish!');
-      endGame();
-      break;
     }
   }
 }
@@ -235,19 +262,20 @@ function endGame() {
 
 
   // Zeige den Highscore an
-  var scoreElement = CAMERA.createElement('div');
+  var scoreElement = document.createElement('div');
   scoreElement.className = 'score';
   scoreElement.innerHTML = 'Game Over! Dein Score: ' + score;
 
-  var reloadButton = CAMERA.createElement('button');
+  var reloadButton = document.createElement('button');
   reloadButton.textContent = 'New Game!';
   reloadButton.addEventListener('click', function () {
     location.reload();
   });
 
   scoreElement.appendChild(reloadButton);
-  CAMERA.body.appendChild(scoreElement);
-  gameOver = true
+  CAMERA.appendChild(scoreElement);
+  clearInterval(eventInterval)
+  gameover = true
 }
 
 // Hilfsfunktion zur Überprüfung von Kollisionen zwischen zwei Rechtecken
@@ -285,7 +313,9 @@ function createTutorialLevel() {
 
   //gegner
 
+  createAstroid()
 
+  createEvent(50,0,16,launchAsteroids)
 
 
 
