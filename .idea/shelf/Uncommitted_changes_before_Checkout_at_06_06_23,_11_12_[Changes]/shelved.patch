@@ -1,0 +1,81 @@
+Index: styles.css
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>/* Beispiel-Stile für das Spiel */\nbody {\n    background-color: #000; /* Hintergrundfarbe des Spiels */\n    margin: 0; /* Entfernt den Standard-Rand um den Seiteninhalt */\n    overflow: hidden; /* Verhindert das Scrollen der Seite */\n  }\n  \n\n\n  .spaceship {\n    position: absolute;\n    top: 200px;\n    left: 50px;\n    width: 50px;\n    height: 50px;\n    background-color: white;\n  }\n  \n  \n  /* Beispiel-Stile für die Gegner */\n  .enemy {\n    position: absolute;\n    top: 50%; /* Vertikal zentriert */\n    left: 100%; /* Startposition außerhalb des Bildschirms */\n    transform: translateY(-50%); /* Korrigiert die Vertikalpositionierung */\n    width: 30px;\n    height: 30px;\n    background-color: #ff0000;\n  }\n  \n  /* Weitere Stile und Anpassungen für andere Elemente können hinzugefügt werden */\n  
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/styles.css b/styles.css
+--- a/styles.css	
++++ b/styles.css	
+@@ -1,4 +1,5 @@
+ /* Beispiel-Stile für das Spiel */
++
+ body {
+     background-color: #000; /* Hintergrundfarbe des Spiels */
+     margin: 0; /* Entfernt den Standard-Rand um den Seiteninhalt */
+Index: .idea/vcs.xml
+===================================================================
+diff --git a/.idea/vcs.xml b/.idea/vcs.xml
+new file mode 100644
+--- /dev/null	
++++ b/.idea/vcs.xml	
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="VcsDirectoryMappings">
++    <mapping directory="" vcs="Git" />
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/modules.xml
+===================================================================
+diff --git a/.idea/modules.xml b/.idea/modules.xml
+new file mode 100644
+--- /dev/null	
++++ b/.idea/modules.xml	
+@@ -0,0 +1,8 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="ProjectModuleManager">
++    <modules>
++      <module fileurl="file://$PROJECT_DIR$/.idea/raumschiff-spiel.iml" filepath="$PROJECT_DIR$/.idea/raumschiff-spiel.iml" />
++    </modules>
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/raumschiff-spiel.iml
+===================================================================
+diff --git a/.idea/raumschiff-spiel.iml b/.idea/raumschiff-spiel.iml
+new file mode 100644
+--- /dev/null	
++++ b/.idea/raumschiff-spiel.iml	
+@@ -0,0 +1,12 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<module type="WEB_MODULE" version="4">
++  <component name="NewModuleRootManager">
++    <content url="file://$MODULE_DIR$">
++      <excludeFolder url="file://$MODULE_DIR$/temp" />
++      <excludeFolder url="file://$MODULE_DIR$/.tmp" />
++      <excludeFolder url="file://$MODULE_DIR$/tmp" />
++    </content>
++    <orderEntry type="inheritedJdk" />
++    <orderEntry type="sourceFolder" forTests="false" />
++  </component>
++</module>
+\ No newline at end of file
+Index: .idea/.gitignore
+===================================================================
+diff --git a/.idea/.gitignore b/.idea/.gitignore
+new file mode 100644
+--- /dev/null	
++++ b/.idea/.gitignore	
+@@ -0,0 +1,8 @@
++# Default ignored files
++/shelf/
++/workspace.xml
++# Editor-based HTTP Client requests
++/httpRequests/
++# Datasource local storage ignored files
++/dataSources/
++/dataSources.local.xml
