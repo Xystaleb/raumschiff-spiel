@@ -1,11 +1,14 @@
 import Ship from "./models/ship.js";
 import Enemy from "./models/enemy.js";
 import { Wall } from "./models/wall.js";
+import GameArea from "./models/gameArea.js";
 
 
 var gameover = false
 const BLOCK_WIDTH = 50;
 const BLOCK_HEIGHT = 50;
+
+var gameArea =new GameArea(0,0,BLOCK_WIDTH*15,BLOCK_HEIGHT*15)
 
 var spaceship = new Ship(
   BLOCK_WIDTH,
@@ -69,6 +72,8 @@ var gameArea = {
 
 // Funktion zum Initialisieren des Spiels
 function initGame() {
+
+  
   // Raumschiff erstellen
   spaceship.element = spaceship.build(document); // Das Raumschiff-Element erstellen
   spaceship.draw(document);
@@ -159,7 +164,7 @@ function checkCollisions() {
     var enemy = enemies[i];
     var enemyRect = enemy.element.getBoundingClientRect();
 
-    if (rectIntersect(spaceshipRect, enemyRect)) {
+    if (beruehrung(spaceshipRect, enemyRect)) {
       // Kollision zwischen Raumschiff und Gegner
       // Hier kannst du deine gewünschte Logik für die Kollision implementieren
       console.log('Kollision!');
@@ -190,7 +195,7 @@ function endGame() {
 }
 
 // Hilfsfunktion zur Überprüfung von Kollisionen zwischen zwei Rechtecken
-function rectIntersect(r1, r2) {
+function beruehrung(r1, r2) {
   return (
     r1.left < r2.right &&
     r1.right > r2.left &&
