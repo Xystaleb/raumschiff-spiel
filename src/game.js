@@ -1,6 +1,6 @@
 import Ship from "./models/ship.js";
 import Enemy from "./models/enemy.js";
-import Floor from "./models/floor.js";
+import { Wall } from "./models/wall.js";
 
 
 
@@ -40,14 +40,7 @@ function handleKeyUp(event) {
   keys[event.key] = false;
 }
 
-// Enemy-Objekt
-function enemy(x, y, speed) {
-  this.element = null;
-  this.x = x;
-  this.y = y;
-  this.speed = speed;
-  // Weitere Eigenschaften des Gegners können hier hinzugefügt werden
-}
+
 
 function createEnemy(x, y) {
   var enemy = new Enemy(x * BLOCK_WIDTH, y * BLOCK_WIDTH, enemySpeed);
@@ -67,12 +60,12 @@ function createEnemy(x, y) {
   enemies.push(enemy); // Gegner zum enemies-Array hinzufügen
 }
 
-function createFloor(x, y, width, height) {
-  var floor = new Floor(x * BLOCK_WIDTH, y * BLOCK_HEIGHT, width * BLOCK_WIDTH, height * BLOCK_HEIGHT);
-  floor.element = floor.build(document)
-  floor.draw(document)
+function createWall(x, y, width, height) {
+  var wall = new Wall(x * BLOCK_WIDTH, y * BLOCK_HEIGHT, width * BLOCK_WIDTH, height * BLOCK_HEIGHT);
+  wall.element = wall.build(document)
+  wall.draw(document)
 
-  enemies.push(floor); // Gegner zum enemies-Array hinzufügen
+  enemies.push(wall); // Gegner zum enemies-Array hinzufügen
 
 }
 
@@ -127,6 +120,13 @@ function moveSpaceship() {
   if (keys['ArrowDown']) {
     // Bewegungslogik für nach unten
     spaceship.y += spaceshipSpeed;
+  }
+  if (spaceship.y<=0){
+    spaceship.y=0
+  }
+
+  if (spaceship.y>=BLOCK_HEIGHT*13){
+    spaceship.y=BLOCK_HEIGHT*14
   }
   spaceship.element.style.top = spaceship.y + 'px';
 }
@@ -204,12 +204,14 @@ function createEiszapfen(x, y) {
 
 
 function createLevelOne() {
-  createFloor(15, 1, 35, 2)
-  createFloor(15, 15, 35, 2)
-  createBaum(17, 8);
-  createEiszapfen(25, 6)
-  createBaum(30, 9)
-  createEiszapfen(35, 5)
+  createWall(15, 0, 35, 2)
+  createWall(15, 13, 35, 2)
+  createWall(17,8,1,8)
+  createWall(25,0,1,6)  
+  createWall(30,9,1,9)
+  createWall(35,0,1,5)
+  createWall(80,4,1,12)
+  createWall(100,0,1,11)
 
   createEnemy(55,5)
   createEnemy(55,8)
@@ -217,12 +219,8 @@ function createLevelOne() {
   createEnemy(55,2)
   createEnemy(55,14)
 
-  createFloor(75, 1, 35, 2)
-  createFloor(75, 15, 35, 2)
-
-  createBaum(80,4)
-  createEiszapfen(100,12)
-
+  createWall(75, 0, 35, 2)
+  createWall(75, 13, 35, 2)
 
  createEnemy(110,3)
  createEnemy(111,4)

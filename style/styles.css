@@ -1,11 +1,15 @@
 /* Beispiel-Stile für das Spiel */
 body {
-    background-color: #000; /* Hintergrundfarbe des Spiels */
+    background-color: white; /* Hintergrundfarbe des Spiels */
     margin: 0; /* Entfernt den Standard-Rand um den Seiteninhalt */
     overflow: hidden; /* Verhindert das Scrollen der Seite */
   }
   
 
+  .gameArea{
+    background-color: #000; /* Hintergrundfarbe des Spiels */
+    margin: 0; 
+  }
 
   .spaceship {
     position: absolute;
@@ -26,6 +30,15 @@ body {
     width: 30px;
     height: 30px;
     background-color: #ff0000;
+  }
+
+  .wall{
+    position: absolute;
+    top: 50%; /* Vertikal zentriert */
+    left: 100%; /* Startposition außerhalb des Bildschirms */
+    width: 30px;
+    height: 30px;
+    background-color:grey;
   }
   
   /* Weitere Stile und Anpassungen für andere Elemente können hinzugefügt werden */

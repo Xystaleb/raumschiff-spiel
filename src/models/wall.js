@@ -1,13 +1,13 @@
 import GameObject from "./game_object.js";
 
-export default class Floor extends GameObject {
+export class Wall extends GameObject {
     constructor(x, y, width, height,) {
         super(x, y, width, height);
     }
 
     build(document) {
         this.element = document.createElement('div');
-        this.element.className = 'enemy';
+        this.element.className = 'wall';
         this.element.style.position = 'absolute';
         this.element.style.top = this.y + 'px';
         this.element.style.left = this.x + 'px';
