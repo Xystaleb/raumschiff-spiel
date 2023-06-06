@@ -104,6 +104,7 @@ function updateAsteroids() {
 
 
 
+
 function createProjectile() {
   const projectile = document.createElement('div');
   projectile.className = 'projectile';
