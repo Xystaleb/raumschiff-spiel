@@ -1,8 +1,8 @@
 import Ship from "./models/ship.js";
 import Enemy from "./models/enemy.js";
-import { Wall } from "./models/wall.js";
 import GameArea from "./models/gameArea.js";
 import Asteroid from "./models/astroids.js";
+import Wall from "./models/wall.js";
 
 
 var gameover = false
@@ -48,36 +48,40 @@ function launchAsteroids(){
   setInterval(createAstroid(),300)
 }
 
+var gameEvents= [];
+
+var asteroids=[];
 
 function createAstroid(){
+  var speed = Math.floor(Math.random()*enemySpeed)+3
   var y= Math.floor(Math.random()*(15*BLOCK_HEIGHT));
   var size= Math.floor(Math.random()*30)+10; 
-  var asteroid = new Asteroid(31*BLOCK_WIDTH,y,size,size);
+  var asteroid = new Asteroid(31*BLOCK_WIDTH,y,size,size,speed);
   asteroid.element = asteroid.build();
   asteroid.draw(CAMERA);
 
-  enemies.push(asteroid)
+  asteroids.push(asteroid)
 }
 
-function createEnemy(x, y) {
+function createBrick(x, y) {
   var enemy = new Enemy(x * BLOCK_WIDTH, y * BLOCK_WIDTH);
   enemy.element = enemy.build(CAMERA)
   enemy.draw(CAMERA)
 
-  enemies.push(enemy); // Gegner zum enemies-Array hinzufügen
+  walls.push(enemy); // Gegner zum walls-Array hinzufügen
 }
 
 function createWall(x, y, width, height) {
-  var wall = new Wall(x * BLOCK_WIDTH, y * BLOCK_HEIGHT, width * BLOCK_WIDTH, height * BLOCK_HEIGHT);
+  var wall = new Wall (x * BLOCK_WIDTH, y * BLOCK_HEIGHT, width * BLOCK_WIDTH, height * BLOCK_HEIGHT);
   wall.element = wall.build(CAMERA)
   wall.draw(CAMERA)
 
-  enemies.push(wall); // Gegner zum enemies-Array hinzufügen
+  walls.push(wall); // Gegner zum walls-Array hinzufügen
 
 }
 
 // Gegner-Array
-var enemies = [];
+var walls = [];
 
 // Spielfeld-Größe
 var gameArea = {
@@ -112,6 +116,8 @@ function gameLoop() {
 
   // Gegner bewegen
   moveWall();
+
+  moveAsteroids();
 
   // Kollisionsprüfung
   checkCollisions();
@@ -163,11 +169,20 @@ function moveSpaceship() {
 
 // Funktion zum Bewegen der Gegner
 function moveWall() {
-  for (var i = 0; i < enemies.length; i++) {
-    var enemy = enemies[i];
+  for (var i = 0; i < walls.length; i++) {
+    var enemy = walls[i];
     var currentLeft = parseInt(enemy.element.style.left);
     var newLeft = currentLeft - enemySpeed;
     enemy.element.style.left = newLeft + 'px';
+  }
+}
+
+function moveAsteroids(){
+  for (var i = 0; i < asteroids.length; i++) {
+    var asteroid = asteroids[i];
+    var currentLeft = parseInt(asteroid.element.style.left);
+    var newLeft = currentLeft - asteroid.speed;
+    asteroid.element.style.left = newLeft + 'px';
   }
 }
 
@@ -175,19 +190,45 @@ function moveWall() {
 function checkCollisions() {
   var spaceshipRect = spaceship.element.getBoundingClientRect();
 
-  for (var i = 0; i < enemies.length; i++) {
-    var enemy = enemies[i];
-    var enemyRect = enemy.element.getBoundingClientRect();
+  gameOverCollision(spaceshipRect,walls);
+  gameOverCollision(spaceshipRect,asteroids);
+  eventCollision(spaceshipRect, gameEvents);
 
-    if (beruehrung(spaceshipRect, enemyRect)) {
+  //aufrufen der projektilkollision   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  
+}
+
+function gameOverCollision(spaceshipRect, array) {
+  for (var i = 0; i < array.length; i++) {
+    var element = array[i];
+    var elementRect = element.element.getBoundingClientRect();
+
+    if (intersect(spaceshipRect, elementRect)) {
       // Kollision zwischen Raumschiff und Gegner
-      // Hier kannst du deine gewünschte Logik für die Kollision implementieren
       console.log('Kollision!');
       endGame();
-      break; // Beende die Schleife, da das Spiel vorbei ist
+      break;
     }
   }
 }
+
+function eventCollision(spaceshipRect, array) {
+  for (var i = 0; i < array.length; i++) {
+    var element = array[i];
+    var elementRect = element.element.getBoundingClientRect();
+
+    if (intersect(spaceshipRect, elementRect)) {
+      // Kollision zwischen Raumschiff und Gegner
+      console.log('Finish!');
+      endGame();
+      break;
+    }
+  }
+}
+
+
+//hier die dustirbsmethode für gegner / projektiele     !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 function endGame() {
   // Stoppe das Spiel, z.B. indem du den gameLoop beendest oder den Interval für die Gegnererzeugung stoppst
@@ -210,7 +251,7 @@ function endGame() {
 }
 
 // Hilfsfunktion zur Überprüfung von Kollisionen zwischen zwei Rechtecken
-function beruehrung(r1, r2) {
+function intersect(r1, r2) {
   return (
     r1.left < r2.right &&
     r1.right > r2.left &&
@@ -272,23 +313,23 @@ function createLevelOne() {
   createWall(100, 0, 1, 11)
 
   //einzelne unzerstöbare gegner
-  createEnemy(55, 5)
-  createEnemy(55, 8)
-  createEnemy(55, 11)
-  createEnemy(55, 2)
-  createEnemy(55, 14)
+  createBrick(55, 5)
+  createBrick(55, 8)
+  createBrick(55, 11)
+  createBrick(55, 2)
+  createBrick(55, 14)
 
-  createEnemy(110, 3)
-  createEnemy(111, 4)
-  createEnemy(112, 5)
-  createEnemy(113, 6)
-  createEnemy(114, 7)
-  createEnemy(115, 8)
-  createEnemy(114, 9)
-  createEnemy(113, 10)
-  createEnemy(112, 11)
-  createEnemy(111, 12)
-  createEnemy(110, 13)
+  createBrick(110, 3)
+  createBrick(111, 4)
+  createBrick(112, 5)
+  createBrick(113, 6)
+  createBrick(114, 7)
+  createBrick(115, 8)
+  createBrick(114, 9)
+  createBrick(113, 10)
+  createBrick(112, 11)
+  createBrick(111, 12)
+  createBrick(110, 13)
 
 
 

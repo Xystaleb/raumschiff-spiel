@@ -1,6 +1,6 @@
 import GameObject from "./game_object.js";
 
-export class Wall extends GameObject {
+export default class Wall extends GameObject {
     constructor(x, y, width, height,) {
         super(x, y, width, height);
     }

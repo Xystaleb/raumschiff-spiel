@@ -17,7 +17,7 @@ export default class Ship extends GameObject {
     return this.element;
   }
 
-  draw(camera){
-    camera.appendChild(this.element)
+  draw(document){
+    document.appendChild(this.element)
   }
 }
