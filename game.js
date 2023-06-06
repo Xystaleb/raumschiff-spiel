@@ -83,6 +83,7 @@ function createAsteroids() {
   }
 }
 
+
 function updateAsteroids() {
   asteroids.forEach((asteroid) => {
     // Aktualisiere die Position des Asteroiden basierend auf seiner Geschwindigkeit
