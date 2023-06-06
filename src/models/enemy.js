@@ -5,7 +5,7 @@ export default class Enemy extends GameObject {
         super(x, y, width, height);
     }
 
-    build(document) {
+    build() {
         this.element = document.createElement('div');
         this.element.className = 'enemy';
         this.element.style.position = 'absolute';
@@ -18,6 +18,6 @@ export default class Enemy extends GameObject {
     }
 
     draw(document) {
-        document.body.appendChild(this.element);
+        document.appendChild(this.element);
     }
 }

@@ -2,6 +2,7 @@ import Ship from "./models/ship.js";
 import Enemy from "./models/enemy.js";
 import { Wall } from "./models/wall.js";
 import GameArea from "./models/gameArea.js";
+import Asteroid from "./models/astroids.js";
 
 
 var gameover = false
@@ -16,6 +17,8 @@ var spaceship = new Ship(
   BLOCK_WIDTH,
   BLOCK_HEIGHT
 );
+
+var CAMERA = document.getElementById("camera")
 
 
 var spaceshipSpeed = 10;
@@ -41,21 +44,33 @@ function handleKeyUp(event) {
   keys[event.key] = false;
 }
 
+function launchAsteroids(){
+  setInterval(createAstroid(),300)
+}
 
 
+function createAstroid(){
+  var y= Math.floor(Math.random()*(15*BLOCK_HEIGHT));
+  var size= Math.floor(Math.random()*30)+10; 
+  var asteroid = new Asteroid(31*BLOCK_WIDTH,y,size,size);
+  asteroid.element = asteroid.build();
+  asteroid.draw(CAMERA);
+
+  enemies.push(asteroid)
+}
 
 function createEnemy(x, y) {
   var enemy = new Enemy(x * BLOCK_WIDTH, y * BLOCK_WIDTH);
-  enemy.element = enemy.build(document)
-  enemy.draw(document)
+  enemy.element = enemy.build(CAMERA)
+  enemy.draw(CAMERA)
 
   enemies.push(enemy); // Gegner zum enemies-Array hinzufügen
 }
 
 function createWall(x, y, width, height) {
   var wall = new Wall(x * BLOCK_WIDTH, y * BLOCK_HEIGHT, width * BLOCK_WIDTH, height * BLOCK_HEIGHT);
-  wall.element = wall.build(document)
-  wall.draw(document)
+  wall.element = wall.build(CAMERA)
+  wall.draw(CAMERA)
 
   enemies.push(wall); // Gegner zum enemies-Array hinzufügen
 
@@ -75,9 +90,9 @@ function initGame() {
 
   
   // Raumschiff erstellen
-  spaceship.element = spaceship.build(document); // Das Raumschiff-Element erstellen
-  spaceship.draw(document);
-  // document.body.appendChild(spaceship.element); // Das Raumschiff-Element der HTML-Seite hinzufügen
+  spaceship.element = spaceship.build(); // Das Raumschiff-Element erstellen
+  spaceship.draw(CAMERA);
+  // CAMERA.body.appendChild(spaceship.element); // Das Raumschiff-Element der HTML-Seite hinzufügen
 
   // Event-Handler für Tastatureingaben registrieren
   document.addEventListener("keydown", handleKeyDown);
@@ -96,7 +111,7 @@ function gameLoop() {
   moveSpaceship();
 
   // Gegner bewegen
-  moveEnemies();
+  moveWall();
 
   // Kollisionsprüfung
   checkCollisions();
@@ -147,7 +162,7 @@ function moveSpaceship() {
 }
 
 // Funktion zum Bewegen der Gegner
-function moveEnemies() {
+function moveWall() {
   for (var i = 0; i < enemies.length; i++) {
     var enemy = enemies[i];
     var currentLeft = parseInt(enemy.element.style.left);
@@ -179,18 +194,18 @@ function endGame() {
 
 
   // Zeige den Highscore an
-  var scoreElement = document.createElement('div');
+  var scoreElement = CAMERA.createElement('div');
   scoreElement.className = 'score';
   scoreElement.innerHTML = 'Game Over! Dein Score: ' + score;
 
-  var reloadButton = document.createElement('button');
+  var reloadButton = CAMERA.createElement('button');
   reloadButton.textContent = 'New Game!';
   reloadButton.addEventListener('click', function () {
     location.reload();
   });
 
   scoreElement.appendChild(reloadButton);
-  document.body.appendChild(scoreElement);
+  CAMERA.body.appendChild(scoreElement);
   gameOver = true
 }
 

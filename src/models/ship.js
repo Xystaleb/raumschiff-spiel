@@ -5,7 +5,7 @@ export default class Ship extends GameObject {
     super(x, y, width, height)
   }
 
-  build(document){
+  build(){
     this.element = document.createElement("div");
     this.element.className = 'spaceship';
     this.element.style.position = 'absolute';
@@ -17,7 +17,7 @@ export default class Ship extends GameObject {
     return this.element;
   }
 
-  draw(document){
-    document.body.appendChild(this.element)
+  draw(camera){
+    camera.appendChild(this.element)
   }
 }

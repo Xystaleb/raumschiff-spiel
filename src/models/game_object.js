@@ -7,7 +7,7 @@ export default class GameObject {
     this.element = null;
   }
 
-  build(document){
+  build(){
   }
 
   draw(document){
