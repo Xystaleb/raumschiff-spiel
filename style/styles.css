@@ -1,66 +1,84 @@
 /* Beispiel-Stile für das Spiel */
 body {
-    background-color: darkgray; /* Hintergrundfarbe des Spiels */
-    margin: 0; /* Entfernt den Standard-Rand um den Seiteninhalt */
-    overflow: hidden; /* Verhindert das Scrollen der Seite */
-  }
-  
-
-  .gameArea{
-    background-color: #000; /* Hintergrundfarbe des Spiels */
-    margin: 0; 
-  }
-
-  .spaceship {
-    position: absolute;
-    background-color: greenyellow;
-  }
-
-  .score {
-    position: relative;
-    background-color: #000;
-    color: aliceblue;
-    z-index: 3;
-  }
-  
-  
-  /* Beispiel-Stile für die Gegner */
-  .enemy {
-    position: absolute;
-    top: 50%; /* Vertikal zentriert */
-    left: 100%; /* Startposition außerhalb des Bildschirms */
-    transform: translateY(-50%); /* Korrigiert die Vertikalpositionierung */
-    width: 30px;
-    height: 30px;
-    background-color: #ff0000;
-  }
-
-  .wall{
-    position: absolute;
-    top: 50%; /* Vertikal zentriert */
-    left: 100%; /* Startposition außerhalb des Bildschirms */
-    width: 30px;
-    height: 30px;
-    background-color:grey;
-  }
-  
-  /* Weitere Stile und Anpassungen für andere Elemente können hinzugefügt werden */
-
-  
-.gameWindow{
-  height: 700px;
-  width: 1200px;
+  background-color: darkgray;
+  /* Hintergrundfarbe des Spiels */
+  margin: 0;
+  /* Entfernt den Standard-Rand um den Seiteninhalt */
+  overflow: hidden;
+  /* Verhindert das Scrollen der Seite */
 }
 
-.space{
+
+.game-area {
+  background-color: #000;
+  /* Hintergrundfarbe des Spiels */
+  margin: 0;
+}
+
+.spaceship {
+  position: absolute;
+  background-color: greenyellow;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px, rgb(51, 51, 51) 0px 0px 0px 3px;
+}
+
+.score {
+  position: relative;
+  background-color: #000;
+  color: aliceblue;
+  z-index: 3;
+}
+
+
+/* Beispiel-Stile für die Gegner */
+.enemy {
+  position: absolute;
+  top: 50%;
+  /* Vertikal zentriert */
+  left: 100%;
+  /* Startposition außerhalb des Bildschirms */
+  transform: translateY(-50%);
+  /* Korrigiert die Vertikalpositionierung */
+  width: 30px;
+  height: 30px;
+  background-color: #ff0000;
+}
+
+.wall {
+  position: absolute;
+  /* Vertikal zentriert */
+  left: 100%;
+  /* Startposition außerhalb des Bildschirms */
+  width: 30px;
+  height: 30px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px, rgb(51, 51, 51) 0px 0px 0px 3px;
+  animation: bg-color 10s infinite alternate;
+}
+
+@keyframes bg-color {
+  0% { background-color: purple; }
+  25% { background-color: blue; }
+  50% { background-color: red; }
+  75% { background-color: orange; }
+  100% { background-color: yellow; }
+}
+/* Weitere Stile und Anpassungen für andere Elemente können hinzugefügt werden */
+
+
+.game-window {
+  width: 1920px;
+  height: 1080px;
+  background-image: linear-gradient(rgba(0, 255, 0, .7) .1em, transparent .1em), linear-gradient(90deg, rgba(0, 255, 0, .7) .1em, transparent .1em);
+  background-size: 3em 3em;
+}
+
+.space {
   background-color: black;
-  height: 700px;
-  width: 1200px;
+  width: 1280px;
+  height: 768px;
 }
 
-.asteroid{
+.asteroid {
   background-color: aquamarine;
-
 }
 
 .projectile {
@@ -68,4 +86,3 @@ body {
   height: 2px;
   background-color: deepskyblue;
 }
-  

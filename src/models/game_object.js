@@ -1,5 +1,5 @@
 export default class GameObject {
-  constructor(x, y, width, height){
+  constructor(x, y, width, height) {
     this.x = x;
     this.y = y;
     this.width = width;
@@ -7,10 +7,27 @@ export default class GameObject {
     this.element = null;
   }
 
-  build(){
+  build() {
+    this.element.style.position = 'absolute';
+    this.element.style.top = this.y + 'px';
+    this.element.style.left = this.x + 'px';
+    this.element.style.width = this.width + 'px';
+    this.element.style.height = this.height + 'px';
   }
 
-  draw(document){
+  update(){
+    this.element.style.top = this.y + 'px';
+    this.element.style.left = this.x + 'px';
+  }
 
+  intersect(r2) {
+    const bounding_box = this.element.getBoundingClientRect();
+    console.log("test intersect");
+    return (
+      bounding_box.left < r2.right &&
+      bounding_box.right > r2.left &&
+      bounding_box.top < r2.bottom &&
+      bounding_box.bottom > r2.top
+    );
   }
 }
