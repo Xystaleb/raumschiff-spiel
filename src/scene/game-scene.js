@@ -30,10 +30,6 @@ export default class GameScene extends Scene {
         document.addEventListener("keydown", this.handleKeyDown.bind(this));
         document.addEventListener("keyup", this.handleKeyUp.bind(this));
 
-        console.log("Asteroid spawner started"); // Überprüfung
-
-
-
         const BLOCK_WIDTH = 50;
         const BLOCK_HEIGHT = 50;
         this.spaceship = new Ship(
@@ -70,8 +66,11 @@ export default class GameScene extends Scene {
         const BLOCK_WIDTH = 50;
         const BLOCK_HEIGHT = 50;
         this.gameObjects.push(this.spaceship);
-
         Level.finish.x = Level.finish.x * BLOCK_WIDTH
+
+        console.log(Level.finish.x)
+
+
         this.events.push(Level.finish)
 
         for (let i = 0; i < Level.walls.length; i++) {
@@ -108,7 +107,7 @@ export default class GameScene extends Scene {
         this.moveWall();
         this.moveAsteroids();
         this.moveEvents();
-        console.log(this.gameObjects);
+
 
         // Gegner bewegen
         // this.moveEvents.bind(this);
@@ -124,10 +123,9 @@ export default class GameScene extends Scene {
 
     nextLevel() {
         const BLOCK_WIDTH = 50
-        console.log(this.spaceship.x)
         if (this.events[0] != null && this.events[0] != undefined) {
             var finish = this.events[0]
-            if (this.spaceship.x > finish.x * BLOCK_WIDTH) {
+            if (finish.x<=0) {
                 this.spaceship.x = 0
                 console.log("start next level")
 
@@ -158,6 +156,7 @@ export default class GameScene extends Scene {
             height * BLOCK_HEIGHT
         );
         wall.build();
+        console.log(wall.x)
         this.gameObjects.push(wall); // Gegner zum walls-Array hinzufügen
         super.build()
     }
@@ -214,10 +213,10 @@ export default class GameScene extends Scene {
     moveAsteroids() {
         this.gameObjects.forEach((gameObject) => {
             if (gameObject instanceof Asteroid) {
-                console.log("Asteroid updated")
+
                 let asteroid = gameObject;
                 asteroid.x += asteroid.speed;
-                console.log("Asteroid updated2")
+
                 // Überprüfe, ob der Asteroid das Spielfeld verlassen hat
                 if (asteroid.x + asteroid.width < 0) {
                     // Asteroid hat das Spielfeld verlassen, daher entfernen
