@@ -5,8 +5,7 @@ import Scene from "./scene.js";
 
 export default class GameScene extends Scene {
     constructor(view) {
-        console.log(view.offsetWidth, view.offsetHeight)
-        console.log(view.getBoundingClientRect())
+
         super(view);
         this.ratio = view.offsetWidth / view.offsetHeight;
         console.log(this.ratio);
@@ -30,7 +29,12 @@ export default class GameScene extends Scene {
         document.addEventListener("keydown", this.handleKeyDown.bind(this));
         document.addEventListener("keyup", this.handleKeyUp.bind(this));
 
-        this.createAstroid();
+        this.createAsteroid();
+        this.startAsteroidSpawner();
+        console.log("Asteroid spawner started"); // Überprüfung
+
+
+
         const BLOCK_WIDTH = 50;
         const BLOCK_HEIGHT = 50;
         this.spaceship = new Ship(
@@ -68,6 +72,9 @@ export default class GameScene extends Scene {
         this.moveSpaceship();
         this.checkBoundaries();
         this.moveWall();
+        this.moveAsteroids();
+        console.log(this.gameObjects);
+
         // Gegner bewegen
         // this.moveEvents.bind(this);
         // this.moveAsteroids.bind(this);
@@ -91,11 +98,22 @@ export default class GameScene extends Scene {
         this.gameObjects.push(wall); // Gegner zum walls-Array hinzufügen
     }
 
-    createAstroid() {
-        const BLOCK_WIDTH = 50;
-        var asteroid = new Asteroid(31 * BLOCK_WIDTH, this.y, this.size, this.size, this.speed);
-        asteroid.element = asteroid.build();
+
+    createAsteroid() {
+        const asteroidSize = Math.floor(Math.random() * 30) + 10;
+        const asteroidSpeed = Math.random() * 10;
+        console.log("Asteroid created");
+        let asteroid = new Asteroid(
+            this.view.offsetWidth,
+            Math.floor(Math.random() * (this.view.offsetHeight - asteroidSize)),
+            asteroidSize,
+            asteroidSize,
+            -asteroidSpeed
+        )
+        asteroid.build();
+        this.gameObjects.push(asteroid);
     }
+
 
     moveWall() {
         for (var i = 0; i < this.gameObjects.length; i++) {
@@ -107,7 +125,7 @@ export default class GameScene extends Scene {
             }
         }
     }
-
+/*
     moveAsteroids() {
         for (var i = 0; i < asteroids.length; i++) {
             var asteroid = asteroids[i];
@@ -116,6 +134,35 @@ export default class GameScene extends Scene {
             asteroid.element.style.left = newLeft + 'px';
         }
     }
+   */
+
+        moveAsteroids()
+        {
+            this.gameObjects.forEach((gameObject) => {
+                if (gameObject instanceof Asteroid) {
+                    console.log("Asteroid updated")
+                    let asteroid = gameObject;
+                    asteroid.x += asteroid.speed;
+                    console.log("Asteroid updated2")
+                    // Überprüfe, ob der Asteroid das Spielfeld verlassen hat
+                    if (asteroid.x + asteroid.width < 0) {
+                        // Asteroid hat das Spielfeld verlassen, daher entfernen
+                        asteroid.element.remove();
+                        this.gameObjects = this.gameObjects.filter((obj) => obj !== asteroid);
+                    } else {
+                        // Aktualisiere die Position des Asteroiden im DOM
+                        asteroid.update();
+                    }
+                }
+            });
+        }
+
+    startAsteroidSpawner() {
+        this.asteroidSpawner = setInterval(() => {
+            this.createAsteroid();
+        }, 500);
+    }
+
 
     // Funktion zur Kollisionsprüfung
     checkCollisions() {
