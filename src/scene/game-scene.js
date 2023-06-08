@@ -5,12 +5,15 @@ import Scene from "./scene.js";
 import Projectile from "../models/projectile.js";
 
 export default class GameScene extends Scene {
+
     constructor(view) {
 
         super(view);
         this.ratio = view.offsetWidth / view.offsetHeight;
         console.log(this.ratio);
         this.gameOver = false;
+        this.LevelCounter=1
+
         this.canShoot = true;
     }
 
@@ -42,7 +45,7 @@ export default class GameScene extends Scene {
         this.gameObjects.push(this.spaceship);
 
         //holen der LevelDatei
-        fetch('../assets/LevelOne.json')
+        fetch(`../assets/Level${this.LevelCounter}.json`)
             .then(response => response.json())
             .then(data => {
 
@@ -75,6 +78,9 @@ export default class GameScene extends Scene {
             console.log(WALL.x)
             this.createWall(WALL.x, WALL.y, WALL.width, WALL.height)
         }
+
+        this.LevelCounter+=1
+
 
     }
 
@@ -125,7 +131,7 @@ export default class GameScene extends Scene {
                 console.log("start next level")
 
 
-                fetch('../assets/LevelTwo.json')
+                fetch(`../assets/Level${this.LevelCounter}.json`)
                     .then(response => response.json())
 
                     .then()
