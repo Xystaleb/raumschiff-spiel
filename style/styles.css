@@ -82,7 +82,5 @@ body {
 }
 
 .projectile {
-  width: 15px;
-  height: 2px;
-  background-color: deepskyblue;
+background-color: orangered;
 }

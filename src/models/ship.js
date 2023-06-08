@@ -5,7 +5,7 @@ export default class Ship extends GameObject {
     const width = 26;
     const height = 26;
     super(x, y, width*ratio, height*ratio)
-    this.projectiles = [];
+    this.project = [];
   }
 
   build(){
@@ -13,4 +13,6 @@ export default class Ship extends GameObject {
     this.element.className = 'spaceship';
     super.build();
   }
+
+
 }
