@@ -22,7 +22,6 @@ export default class GameObject {
 
   intersect(r2) {
     const bounding_box = this.element.getBoundingClientRect();
-
     return (
       bounding_box.left < r2.right &&
       bounding_box.right > r2.left &&

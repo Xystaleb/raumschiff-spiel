@@ -246,6 +246,8 @@ export default class GameScene extends Scene {
                 var elementRect = current.element.getBoundingClientRect();
                 if (this.spaceship.intersect(elementRect)) {
                     // Kollision zwischen Raumschiff und Gegner
+                    console.log("boom")
+                    console.log(this.spaceship.x,this.spaceship.y,elementRect.x,elementRect.y)
                     endGame();
                     return;
                 }
