@@ -6,6 +6,7 @@ export default class Scene {
         this.view = view;
         this.keys = [];
 
+        this.events = [];
         this.gameObjects = [];
         this.components = [];
     }
