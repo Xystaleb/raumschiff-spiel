@@ -30,8 +30,6 @@ export default class GameScene extends Scene {
         document.addEventListener("keydown", this.handleKeyDown.bind(this));
         document.addEventListener("keyup", this.handleKeyUp.bind(this));
 
-        this.createAsteroid();
-        this.startAsteroidSpawner();
         console.log("Asteroid spawner started"); // Überprüfung
 
 
@@ -51,8 +49,6 @@ export default class GameScene extends Scene {
         //holen der LevelDatei
         fetch('../assets/LevelOne.json')
         .then(response => response.json())
-        
-
         .then(data => {
       
           //Laden des Levels
@@ -62,8 +58,8 @@ export default class GameScene extends Scene {
           console.error('Fehler beim Laden der JSON-Datei:', error);
         });
 
-        super.build();
-        
+        console.log(this.gameObjects)
+
     }
 
 
@@ -80,7 +76,9 @@ export default class GameScene extends Scene {
             this.createWall(WALL.x, WALL.y, WALL.width, WALL.height)
         }
 
-        super.build();
+        this.startAsteroidSpawner();
+
+       
     }
 
     createTutorialLevel() {
@@ -97,7 +95,6 @@ export default class GameScene extends Scene {
         this.createWall(44, 5, 6, 1)
 
         //gegner
-        // createAstroid()
         // createEvent(50, 0, 16, launchAsteroids)
     }
 
@@ -125,7 +122,7 @@ export default class GameScene extends Scene {
     nextLevel() {
         const BLOCK_WIDTH=50
         console.log(this.spaceship.x)
-        if (this.spaceship.x > this.gameObjects[this.gameObjects.length-1].x+20){
+        if (this.spaceship.x > this.view.offsetwidth+20){
             this.spaceship.x=0
             console.log("start next level")
             
@@ -157,10 +154,11 @@ export default class GameScene extends Scene {
         );
         wall.build();
         this.gameObjects.push(wall); // Gegner zum walls-Array hinzufügen
+        super.build()
     }
 
 
-    createAsteroid() {
+    createRandomAsteroid() {
         const asteroidSize = Math.floor(Math.random() * 30) + 10;
         const asteroidSpeed = Math.random() * 10;
         console.log("Asteroid created");
@@ -173,6 +171,8 @@ export default class GameScene extends Scene {
         )
         asteroid.build();
         this.gameObjects.push(asteroid);
+         
+        super.build();
     }
 
 
@@ -220,7 +220,7 @@ export default class GameScene extends Scene {
 
     startAsteroidSpawner() {
         this.asteroidSpawner = setInterval(() => {
-            this.createAsteroid();
+            this.createRandomAsteroid();
         }, 500);
     }
 
