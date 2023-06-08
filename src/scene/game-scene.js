@@ -11,6 +11,7 @@ export default class GameScene extends Scene {
         this.ratio = view.offsetWidth / view.offsetHeight;
         console.log(this.ratio);
         this.gameOver = false;
+    
     }
 
     draw() {
@@ -40,7 +41,41 @@ export default class GameScene extends Scene {
         );
         this.spaceship.build();
         this.gameObjects.push(this.spaceship);
-        this.createTutorialLevel();
+
+
+
+        //holen der LevelDatei
+        fetch('../assets/LevelOne.json')
+        .then(response => response.json())
+        
+
+        .then(data => {
+      
+          //Laden des Levels
+          this.loadLevel(data);
+        })
+        .catch(error => {
+          console.error('Fehler beim Laden der JSON-Datei:', error);
+        });
+
+        super.build();
+        
+    }
+
+
+
+    loadLevel(Level) {
+        this.gameObjects = []
+        const BLOCK_WIDTH = 50;
+        const BLOCK_HEIGHT = 50;
+        this.gameObjects.push(this.spaceship);
+
+        for (let i = 0; i < Level.walls.length; i++) {
+            let WALL = Level.walls[i];
+            console.log(WALL.x)
+            this.createWall(WALL.x, WALL.y, WALL.width, WALL.height)
+        }
+
         super.build();
     }
 
@@ -54,7 +89,7 @@ export default class GameScene extends Scene {
         this.createWall(30, 6, 1, 8)
         this.createWall(40, 0, 1, 10)
         this.createWall(40, 9, 6, 1)
-        this.createWall(48, 5, 1, 10)
+        this.createWall(49, 5, 1, 10)
         this.createWall(44, 5, 6, 1)
 
         //gegner
@@ -73,9 +108,35 @@ export default class GameScene extends Scene {
         // this.moveAsteroids.bind(this);
         // Kollisionsprüfung
         this.checkCollisions();
+
+        this.nextLevel();
         // Spiel-Loop wiederholen
         if (!this.gameOver)
             requestAnimationFrame(this.loop.bind(this));
+    }
+
+    nextLevel() {
+        const BLOCK_WIDTH=50
+        console.log(this.spaceship.x)
+        if (this.spaceship.x > this.gameObjects[this.gameObjects.length-1].x+20){
+            this.spaceship.x=0
+            console.log("start next level")
+            
+            
+            fetch('../assets/LevelTwo.json')
+            .then(response => response.json())
+            
+            .then()
+            .then(data => {
+          
+              //Laden des Levels
+              this.loadLevel(data);
+            }).then()
+            .catch(error => {
+              console.error('Fehler beim Laden der JSON-Datei:', error);
+            });
+
+        }
     }
 
     createWall(x, y, width, height) {
@@ -95,6 +156,7 @@ export default class GameScene extends Scene {
         const BLOCK_WIDTH = 50;
         var asteroid = new Asteroid(31 * BLOCK_WIDTH, this.y, this.size, this.size, this.speed);
         asteroid.element = asteroid.build();
+
     }
 
     moveWall() {
@@ -102,7 +164,7 @@ export default class GameScene extends Scene {
             if (this.gameObjects[i] instanceof Wall) {
                 var wall = this.gameObjects[i];
                 var newLeft = wall.x;
-                wall.x = newLeft - 1;
+                wall.x = newLeft - 2;
                 wall.update();
             }
         }
@@ -168,7 +230,7 @@ export default class GameScene extends Scene {
     }
 
     moveSpaceship() {
-        const spaceshipSpeed = 2;
+        const spaceshipSpeed = 5;
         if (this.keys['ArrowUp']) {
             // Bewegungslogik für nach oben
             this.spaceship.y -= spaceshipSpeed;

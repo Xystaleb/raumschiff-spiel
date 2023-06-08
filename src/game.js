@@ -12,9 +12,11 @@ const BLOCK_WIDTH = 50;
 const BLOCK_HEIGHT = 50;
 
 const CAMERA = document.getElementById("camera");
+//holen der LevelDatei
 var gameScene = new GameScene(CAMERA);
-gameScene.build();
-gameScene.draw();
+  
+  gameScene.build()
+gameScene.draw()
 
 var menuScene = new MenuScene(CAMERA);
 // menuScene.build();
