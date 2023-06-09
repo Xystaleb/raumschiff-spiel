@@ -11,7 +11,7 @@ export default class GameScene extends Scene {
         this.ratio = view.offsetWidth / view.offsetHeight;
         console.log(this.ratio);
         this.gameOver = false;
-        this.LevelCounter=1
+        this.LevelCounter = 5
 
     }
 
@@ -69,19 +69,38 @@ export default class GameScene extends Scene {
         const BLOCK_HEIGHT = 50;
         this.gameObjects.push(this.spaceship);
         Level.finish.x = Level.finish.x * BLOCK_WIDTH
-
-        console.log(Level.finish.x)
-
-
         this.events.push(Level.finish)
 
-        for (let i = 0; i < Level.walls.length; i++) {
-            let WALL = Level.walls[i];
-            console.log(WALL.x)
-            this.createWall(WALL.x, WALL.y, WALL.width, WALL.height)
+        if (Level.walls !== undefined) {
+            for (let i = 0; i < Level.walls.length; i++) {
+                let WALL = Level.walls[i];
+                this.createWall(WALL.x, WALL.y, WALL.width, WALL.height)
+            }
         }
 
-        this.LevelCounter+=1
+        if (Level.asteroids !== undefined) {
+            for (let i = 0; i < Level.asteroids.length; i++) {
+                const asteroid = Level.asteroids[i];
+                this.createAsteroid(asteroid.x, asteroid.y, asteroid.size, asteroid.speed)
+            }
+        }
+
+        if (Level.randomSize !== undefined) {
+            for (let i = 0; i < Level.randomSize.length; i++) {
+                const asteroid = Level.randomSize[i];
+                const size = Math.random() * (BLOCK_WIDTH-10)+10
+                this.createAsteroid(asteroid.x, asteroid.y, size, asteroid.speed)
+            }
+        }
+
+        if (Level.asteroidSpawners !== undefined) {
+            for (let i = 0; i < Level.asteroidSpawners.length; i++) {
+                Level.asteroidSpawners[i].x = Level.asteroidSpawners[i].x * BLOCK_WIDTH
+                this.events.push(Level.asteroidSpawners[i]);
+            }
+        }
+
+        this.LevelCounter += 1
 
 
     }
@@ -118,6 +137,7 @@ export default class GameScene extends Scene {
         // this.moveAsteroids.bind(this);
         // Kollisionsprüfung
         this.checkCollisions();
+        this.checkEvents();
 
         this.nextLevel();
         // Spiel-Loop wiederholen
@@ -125,15 +145,27 @@ export default class GameScene extends Scene {
             requestAnimationFrame(this.loop.bind(this));
     }
 
+    checkEvents() {
+        if (this.events !== undefined) {
+            for (let i = 1; i < this.events.length; i++) {
+                const element = this.events[i];
+                if (element.type == "spawner")
+                if (element.x <= 0) {
+                    this.startAsteroidSpawner();
+                    this.events.splice(i, 1)
+                    break;
+                }
+            }
+        }
+    }
+
     nextLevel() {
         const BLOCK_WIDTH = 50
         if (this.events[0] != null && this.events[0] != undefined) {
             var finish = this.events[0]
-            if (finish.x<=0) {
+            if (finish.x <= 0) {
                 this.spaceship.x = 0
-                console.log("start next level")
-
-
+                console.log(`start level: ${this.LevelCounter}`)
                 fetch(`../assets/Level${this.LevelCounter}.json`)
                     .then(response => response.json())
 
@@ -165,6 +197,21 @@ export default class GameScene extends Scene {
         super.build()
     }
 
+    createAsteroid(x, y, size, speed) {
+        const BLOCK_WIDTH = 50;
+        const BLOCK_HEIGHT = 50;
+        let asteroid = new Asteroid(
+            x * BLOCK_WIDTH,
+            y * BLOCK_HEIGHT,
+            size,
+            -speed
+        )
+        asteroid.build();
+        this.gameObjects.push(asteroid);
+
+        super.build();
+    }
+
 
     createRandomAsteroid() {
         const asteroidSize = Math.floor(Math.random() * 30) + 10;
@@ -173,7 +220,6 @@ export default class GameScene extends Scene {
         let asteroid = new Asteroid(
             this.view.offsetWidth,
             Math.floor(Math.random() * (this.view.offsetHeight - asteroidSize)),
-            asteroidSize,
             asteroidSize,
             -asteroidSpeed
         )
@@ -251,7 +297,7 @@ export default class GameScene extends Scene {
                 if (this.spaceship.intersect(elementRect)) {
                     // Kollision zwischen Raumschiff und Gegner
                     console.log("boom")
-                    console.log(this.spaceship.x,this.spaceship.y,elementRect.x,elementRect.y)
+                    console.log(this.spaceship.x, this.spaceship.y, elementRect.x, elementRect.y)
                     endGame();
                     return;
                 }
