@@ -12,7 +12,7 @@ export default class GameScene extends Scene {
         this.ratio = view.offsetWidth / view.offsetHeight;
         console.log(this.ratio);
         this.gameOver = false;
-        this.LevelCounter = 5
+        this.LevelCounter = 1
 
         this.canShoot = true;
     }
@@ -243,7 +243,7 @@ export default class GameScene extends Scene {
             // Verzögerung für den nächsten Schuss
             setTimeout(() => {
                 this.canShoot = true;
-            }, 500); // 500 Millisekunden Verzögerung
+            }, 100); // 500 Millisekunden Verzögerung
         }
     }
 
@@ -251,7 +251,7 @@ export default class GameScene extends Scene {
         const projectilesToDelete = []
         console.log(this.projectiles.length)
         this.projectiles.forEach((projectile,idx) => {
-            console.log(projectile.x)
+            
             if (projectile.x <= this.view.offsetWidth) {
                 projectile.x += 2;
             } else {
@@ -319,7 +319,6 @@ export default class GameScene extends Scene {
 
     // Funktion zur Kollisionsprüfung
     checkCollisions() {
-        console.log(this.gameObjects.length);
         for (var i = 0; i < this.gameObjects.length; i++) {
             var current = this.gameObjects[i];
             if (current instanceof Wall || current instanceof Asteroid) {
