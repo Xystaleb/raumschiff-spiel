@@ -9,6 +9,8 @@ export default class Scene {
         this.events = [];
         this.gameObjects = [];
         this.components = [];
+
+        this.sceneState = {};
     }
 
     build(){

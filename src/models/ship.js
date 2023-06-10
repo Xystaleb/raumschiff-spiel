@@ -1,11 +1,10 @@
-import GameObject from "./game_object.js";
+import GameObject from "./game-object.js";
 
 export default class Ship extends GameObject {
   constructor(x, y, ratio){
     const width = 26;
     const height = 26;
     super(x, y, width*ratio, height*ratio)
-    this.projectiles = [];
   }
 
   build(){

@@ -1,4 +1,4 @@
-import GameObject from "./game_object.js";
+import GameObject from "./game-object.js";
 
 export default class Enemy extends GameObject {
     constructor(x, y, width, height,) {
@@ -15,9 +15,5 @@ export default class Enemy extends GameObject {
         this.element.style.height = this.height + 'px';
 
         return this.element
-    }
-
-    draw(document) {
-        document.appendChild(this.element);
     }
 }

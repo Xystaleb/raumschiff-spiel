@@ -1,8 +1,8 @@
-import GameObject from "./game_object.js";
+import GameObject from "./game-object.js";
 
 export default class Asteroid extends GameObject {
-    constructor(x, y, width, height, speed) {
-        super(x, y, width, height);
+    constructor(x, y, size, speed) {
+        super(x, y, size, size);
         this.speed = speed;
     }
 
