@@ -9,7 +9,7 @@ export default class Scene {
         this.events = [];
         this.gameObjects = [];
         this.components = [];
-
+        this.projectiles = [];
         this.sceneState = {};
     }
 
@@ -20,13 +20,17 @@ export default class Scene {
         }
 
         // add gameObjects
-        for(let gameObject of this.gameObjects){
+        for(const gameObject of this.gameObjects){
             this.view.append(gameObject.element);
         }
 
         // add components
-        for(let component of this.components){
+        for(const component of this.components){
             this.view.append(component);
+        }
+
+        for(const projectile of this.projectiles){
+            this.view.append(projectile.element)
         }
     }
 

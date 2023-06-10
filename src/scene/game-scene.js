@@ -2,7 +2,7 @@ import Asteroid from "../models/asteroid.js";
 import Ship from "../models/ship.js";
 import Wall from "../models/wall.js";
 import Scene from "./scene.js";
-
+import Projectile from "../models/projectile.js";
 import { getStage } from "../level-helper.js";
 
 export default class GameScene extends Scene {
@@ -18,6 +18,7 @@ export default class GameScene extends Scene {
 
     getSceneState(){
         return this.sceneState;
+        this.canShoot = true;
     }
 
     draw() {
@@ -90,7 +91,7 @@ export default class GameScene extends Scene {
             this.createWall(wall.x, wall.y, wall.width, wall.height)
         }
 
-        this.sceneState.stage += 1
+        this.sceneState.stage += 1;
     }
 
     createTutorialLevel() {
@@ -120,11 +121,13 @@ export default class GameScene extends Scene {
         this.moveAsteroids();
         this.moveEvents();
 
+
         // Gegner bewegen
         // this.moveEvents.bind(this);
         // this.moveAsteroids.bind(this);
         // Kollisionsprüfung
         this.checkCollisions();
+        this.checkEvents();
 
         await this.nextLevel();
         // Spiel-Loop wiederholen
@@ -132,11 +135,24 @@ export default class GameScene extends Scene {
             requestAnimationFrame(this.loop.bind(this));
     }
 
+    checkEvents() {
+        if (this.events !== undefined) {
+            for (let i = 1; i < this.events.length; i++) {
+                const element = this.events[i];
+                if (element.type == "spawner")
+                if (element.x <= 0) {
+                    this.startAsteroidSpawner();
+                    this.events.splice(i, 1)
+                    break;
+                }
+            }
+        }
+    }
+
     async nextLevel() {
         const BLOCK_WIDTH = 50
         if (this.events[0] !== undefined) {
             var finish = this.events[0]
-
             if (finish.x <= 0) {
                 this.spaceship.x = 0
                 this.sceneState.currentStage = await getStage(this.sceneState.stage + 1);
@@ -159,6 +175,22 @@ export default class GameScene extends Scene {
         super.build()
     }
 
+    createAsteroid(x, y, size, speed) {
+        const BLOCK_WIDTH = 50;
+        const BLOCK_HEIGHT = 50;
+        let asteroid = new Asteroid(
+            x * BLOCK_WIDTH,
+            y * BLOCK_HEIGHT,
+            size,
+            -speed
+        )
+        asteroid.build();
+        this.gameObjects.push(asteroid);
+
+        super.build();
+    }
+
+
     createRandomAsteroid() {
         const asteroidSize = Math.floor(Math.random() * 30) + 10;
         const asteroidSpeed = Math.random() * 10;
@@ -167,14 +199,56 @@ export default class GameScene extends Scene {
         const asteroidY = Math.floor(Math.random() * (this.view.offsetHeight - asteroidSize));
 
         let asteroid = new Asteroid(
-            asteroidX,
-            asteroidY,
+            this.view.offsetWidth,
+            Math.floor(Math.random() * (this.view.offsetHeight - asteroidSize)),
+            asteroidSize,
             asteroidSize,
             -asteroidSpeed
         )
         asteroid.build();
 
         this.gameObjects.push(asteroid);
+
+        super.build();
+
+    }
+
+    createProjectile() {
+        if (this.canShoot) {
+            const projectile = new Projectile(
+                this.spaceship.x + this.spaceship.width,
+                this.spaceship.y + this.spaceship.height / 2,
+                10,
+                4
+            );
+            projectile.build();
+            this.projectiles.push(projectile);
+            super.build();
+            this.canShoot = false;
+
+            // Verzögerung für den nächsten Schuss
+            setTimeout(() => {
+                this.canShoot = true;
+            }, 100); // 500 Millisekunden Verzögerung
+        }
+    }
+
+    updateProjectiles() {
+        const projectilesToDelete = []
+        console.log(this.projectiles.length)
+        this.projectiles.forEach((projectile,idx) => {
+            
+            if (projectile.x <= this.view.offsetWidth) {
+                projectile.x += 2;
+            } else {
+               // projectilesToDelete.push(idx);
+            }
+             projectile.update();
+        });
+        for(const idx of projectilesToDelete){
+            this.projectiles[idx].element.remove();
+            this.projectiles.splice(idx,1);
+        }
         super.build();
     }
 
@@ -196,7 +270,6 @@ export default class GameScene extends Scene {
             }
         }
     }
-
     /*
         moveAsteroids() {
             for (var i = 0; i < asteroids.length; i++) {
@@ -209,7 +282,8 @@ export default class GameScene extends Scene {
        */
 
     moveAsteroids() {
-        this.gameObjects.forEach((gameObject) => {
+        const asteroidsToDelete = [];
+        this.gameObjects.forEach((gameObject,idx) => {
             if (gameObject instanceof Asteroid) {
                 let asteroid = gameObject;
                 asteroid.x += asteroid.speed;
@@ -217,14 +291,18 @@ export default class GameScene extends Scene {
                 // Überprüfe, ob der Asteroid das Spielfeld verlassen hat
                 if (asteroid.x + asteroid.width < 0) {
                     // Asteroid hat das Spielfeld verlassen, daher entfernen
-                    asteroid.element.remove();
-                    this.gameObjects = this.gameObjects.filter((obj) => obj !== asteroid);
+                    asteroidsToDelete.push(idx)
+
                 } else {
                     // Aktualisiere die Position des Asteroiden im DOM
                     asteroid.update();
                 }
             }
         });
+        for( const idx of asteroidsToDelete ){
+            this.gameObjects[idx].element.remove();
+            this.gameObjects.splice(idx,1)
+        }
     }
 
     startAsteroidSpawner() {
@@ -242,7 +320,7 @@ export default class GameScene extends Scene {
                 if (this.spaceship.intersect(elementRect)) {
                     // Kollision zwischen Raumschiff und Gegner
                     console.log("boom")
-                    // console.log(this.spaceship.x,this.spaceship.y,elementRect.x,elementRect.y)
+                    console.log(this.spaceship.x,this.spaceship.y,elementRect.x,elementRect.y)
                     endGame();
                     return;
                 }
@@ -290,7 +368,11 @@ export default class GameScene extends Scene {
             // Bewegungslogik für nach unten
             this.spaceship.x += spaceshipSpeed;
         }
-        this.spaceship.update();
+        if (this.keys[' '] && this.canShoot) {
+            // Schießen eines Projektils
+            this.createProjectile();
+        }
+            this.spaceship.update();
     }
 
     gameOverCollision() {
