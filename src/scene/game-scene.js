@@ -54,48 +54,48 @@ export default class GameScene extends Scene {
         }
         this.gameObjects.push(this.spaceship);
 
-        await this.initStage(this.sceneState.currentStage);
+        this.createRandomAsteroid();
+        this.createRandomAsteroid();
+        this.createRandomAsteroid();
+        this.createRandomAsteroid();
+
+        await this.initStage();
         super.build();
     }
 
     async initStage() {
-        this.sceneState.stage = 1;
-        this.sceneState.currentStage = await getStage(this.sceneState.stage);
-
-        for (const wallConfig of this.sceneState.currentStage.walls) {
-            var wall = new Wall(
-                wallConfig.x * 50,
-                wallConfig.y * 50,
-                wallConfig.width * 50,
-                wallConfig.height * 50
-            );
-            wall.build();
-            this.gameObjects.push(wall);
-        }
+        this.sceneState.stage = 0;
+        this.sceneState.currentStage = await getStage(1);
+        await this.advanceStage();
     }
 
     async advanceStage() {
-        this.gameObjects = [];
         const BLOCK_WIDTH = 50;
-        const BLOCK_HEIGHT = 50;
 
         const stage = this.sceneState.currentStage;
 
-        for(const wall of stage.walls){
-            this.createWall(wall.x, wall.y, wall.size, wall.speed);
+        for (const wall of stage.walls) {
+            this.createWall(wall.x, wall.y, wall.width, wall.height);
         }
 
-        for(const asteroid of stage.asteroids){
-            this.createAsteroid(asteroid.x, asteroid.y, asteroid.size, asteroid.speed);
+        if (stage.asteroids !== undefined) {
+            for (const asteroid of stage.asteroids) {
+                this.createAsteroid(asteroid.x, asteroid.y, asteroid.size, asteroid.speed);
+            }
         }
 
-        for(const rnd of stage.randomSize){
-            this.createAsteroid(rnd.x, rnd.y, rnd.size, rnd.speed);
+        if (stage.randomSize !== undefined) {
+            for (const rnd of stage.randomSize) {
+                this.createAsteroid(rnd.x, rnd.y, rnd.size, rnd.speed);
+            }
         }
 
-        for(const spawner of stage.asteroidSpawner){
-            spawner *= BLOCK_WIDTH;
-            this.events.push(spawner);
+        if (stage.asteroidSpawner !== undefined) {
+            for (const spawner of stage.asteroidSpawner) {
+                spawner.x *= BLOCK_WIDTH;
+                this.events.push(spawner);
+                console.log("debug");
+            }
         }
 
         this.sceneState.stage += 1;
@@ -147,7 +147,8 @@ export default class GameScene extends Scene {
             if (element.type == "spawner")
                 if (element.x <= 0) {
                     this.startAsteroidSpawner();
-                    this.events.splice(i, 1)
+                    console.log("debug spawner");
+                    this.events.splice(i, 1);
                     return;
                 }
         }
@@ -259,7 +260,6 @@ export default class GameScene extends Scene {
             if (this.gameObjects[i] instanceof Wall) {
                 const wall = this.gameObjects[i];
                 const newLeft = wall.x;
-                // change to newLeft - 2;
                 wall.x = newLeft;
                 wall.update();
             }

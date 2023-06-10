@@ -35,7 +35,6 @@ export default class Scene {
     }
 
     registerGameObject(gameObject){
-        this.gameObjects.push(gameObject);
         this.view.append(gameObject.element);
     }
 
