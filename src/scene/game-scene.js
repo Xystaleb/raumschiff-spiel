@@ -53,12 +53,6 @@ export default class GameScene extends Scene {
             this.spaceship.build();
         }
         this.gameObjects.push(this.spaceship);
-
-        this.createRandomAsteroid();
-        this.createRandomAsteroid();
-        this.createRandomAsteroid();
-        this.createRandomAsteroid();
-
         await this.initStage();
         super.build();
     }
@@ -66,19 +60,18 @@ export default class GameScene extends Scene {
     async initStage() {
         this.sceneState.stage = 0;
         this.sceneState.currentStage = await getStage(1);
-        await this.advanceStage();
+        await this.initializeStage();
     }
 
-    async advanceStage() {
+    async initializeStage() {
         const BLOCK_WIDTH = 50;
 
         const stage = this.sceneState.currentStage;
-
         for (const wall of stage.walls) {
             this.createWall(wall.x, wall.y, wall.width, wall.height);
         }
 
-        if (stage.asteroids !== undefined) {
+        if(stage.asteroids){
             for (const asteroid of stage.asteroids) {
                 this.createAsteroid(asteroid.x, asteroid.y, asteroid.size, asteroid.speed);
             }
@@ -94,7 +87,6 @@ export default class GameScene extends Scene {
             for (const spawner of stage.asteroidSpawner) {
                 spawner.x *= BLOCK_WIDTH;
                 this.events.push(spawner);
-                console.log("debug");
             }
         }
 
@@ -161,7 +153,7 @@ export default class GameScene extends Scene {
         if (finish.x <= 0) {
             this.spaceship.x = 0
             this.sceneState.currentStage = await getStage(this.sceneState.stage + 1);
-            await this.advanceStage();
+            await this.initializeStage();
         }
     }
 
@@ -265,16 +257,6 @@ export default class GameScene extends Scene {
             }
         }
     }
-    /*
-        moveAsteroids() {
-            for (var i = 0; i < asteroids.length; i++) {
-                var asteroid = asteroids[i];
-                var currentLeft = parseInt(asteroid.element.style.left);
-                var newLeft = currentLeft - asteroid.speed;
-                asteroid.element.style.left = newLeft + 'px';
-            }
-        }
-       */
 
     moveAsteroids() {
         const asteroidsToDelete = [];
@@ -283,6 +265,7 @@ export default class GameScene extends Scene {
                 let asteroid = gameObject;
                 asteroid.x += asteroid.speed;
 
+                console.log(gameObject);
                 // Überprüfe, ob der Asteroid das Spielfeld verlassen hat
                 if (asteroid.x + asteroid.width < 0) {
                     // Asteroid hat das Spielfeld verlassen, daher entfernen
