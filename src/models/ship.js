@@ -5,6 +5,8 @@ export default class Ship extends GameObject {
     const width = 26;
     const height = 26;
     super(x, y, width*ratio, height*ratio)
+    this.projectiles = [];
+    this.canShoot = true;
   }
 
   build(){

@@ -40,7 +40,6 @@ export default class Scene {
     }
 
     registerProjectile(projectile){
-        this.projectiles.push(projectile);
         this.view.append(projectile.element);
     }
 
