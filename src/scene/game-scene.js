@@ -179,7 +179,7 @@ export default class GameScene extends Scene {
     }
 
     createRandomAsteroid() {
-        const asteroidSize = Math.floor(Math.random() * 30) + 10;
+        const asteroidSize = Math.floor(Math.random() * 30) + 30;
         const asteroidSpeed = Math.random();
 
         const asteroidX = this.view.offsetWidth;
