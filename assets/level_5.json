@@ -16,7 +16,7 @@
          "asteroidSpawners":[
         {"x":50,"type":"spawner"},{"x":55,"type":"spawner"},{"x":60,"type":"spawner"}],
     
-        "finish": {"x":110}
+        "finish": 110
     
     
 

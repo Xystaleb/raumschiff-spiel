@@ -12,7 +12,8 @@ export default class GameScene extends Scene {
         this.sceneState = {
             stage: 1,
             currentStage: undefined,
-            gameOver: false
+            gameOver: false,
+            finish: undefined
         };
     }
 
@@ -73,6 +74,8 @@ export default class GameScene extends Scene {
         const BLOCK_WIDTH = 50;
 
         const stage = this.sceneState.currentStage;
+        this.finish = stage.finish*BLOCK_WIDTH;
+
         for (const wall of stage.walls) {
             this.createWall(wall.x, wall.y, wall.width, wall.height);
         }
@@ -99,22 +102,6 @@ export default class GameScene extends Scene {
         this.sceneState.stage += 1;
     }
 
-    createTutorialLevel() {
-        //boden und decke
-        this.createWall(0, 0, 50, 2)
-        this.createWall(0, 14, 50, 2)
-
-        //Wände
-        this.createWall(15, 0, 1, 7)
-        this.createWall(30, 6, 1, 8)
-        this.createWall(40, 0, 1, 10)
-        this.createWall(40, 9, 6, 1)
-        this.createWall(49, 5, 1, 10)
-        this.createWall(44, 5, 6, 1)
-
-        //gegner
-        // createEvent(50, 0, 16, launchAsteroids)
-    }
 
     // game loop
     async loop() {
@@ -126,12 +113,15 @@ export default class GameScene extends Scene {
         this.moveEvents();
         this.updateProjectiles(this.playerOneShip);
         this.updateProjectiles(this.playerTwoShip);
+        this.moveFinish();
 
         // Gegner bewegen
         // Kollisionsprüfung
         this.checkCollisions();
         this.checkEvents();
 
+        console.log(this.finish)
+        if (this.finish*50 <=0)
         await this.nextLevel();
         // Spiel-Loop wiederholen
         if (!this.gameOver)
@@ -153,14 +143,10 @@ export default class GameScene extends Scene {
     }
 
     async nextLevel() {
-        if (this.events[0] === undefined)
-            return;
-        var finish = this.events[0]
-        if (finish.x <= 0) {
             this.playerOneShip.x = 0
             this.sceneState.currentStage = await getStage(this.sceneState.stage + 1);
             await this.initializeStage();
-        }
+        
     }
 
     createWall(x, y, width, height) {
@@ -255,11 +241,15 @@ export default class GameScene extends Scene {
         }
     }
 
+    moveFinish() {
+        this.finish -= 2
+    }
+
     moveWall() {
         for (var i = 0; i < this.gameObjects.length; i++) {
             if (this.gameObjects[i] instanceof Wall) {
                 const wall = this.gameObjects[i];
-                const newLeft = wall.x;
+                const newLeft = wall.x-2;
                 wall.x = newLeft;
                 wall.update();
             }
@@ -336,7 +326,7 @@ export default class GameScene extends Scene {
     }
 
     moveSpaceship() {
-        const spaceshipSpeed = 3;
+        const spaceshipSpeed = 5;
         if (this.keys['ArrowUp']) {
             // Bewegungslogik für nach oben
             this.playerOneShip.y -= spaceshipSpeed;
