@@ -14,11 +14,11 @@ export default class GameScene extends Scene {
             currentStage: undefined,
             gameOver: false
         };
+        this.canShoot = true;
     }
 
-    getSceneState(){
+    getSceneState() {
         return this.sceneState;
-        this.canShoot = true;
     }
 
     draw() {
@@ -58,15 +58,15 @@ export default class GameScene extends Scene {
         super.build();
     }
 
-    async initStage(){
+    async initStage() {
         this.sceneState.stage = 1;
         this.sceneState.currentStage = await getStage(this.sceneState.stage);
-        console.log(this.sceneState.currentStage.walls.length);
-        for(const wallConfig of this.sceneState.currentStage.walls) {
+
+        for (const wallConfig of this.sceneState.currentStage.walls) {
             var wall = new Wall(
-                wallConfig.x * 50, 
-                wallConfig.y * 50 + this.ratio*50,
-                wallConfig.width * 50, 
+                wallConfig.x * 50,
+                wallConfig.y * 50,
+                wallConfig.width * 50,
                 wallConfig.height * 50
             );
             wall.build();
@@ -74,21 +74,28 @@ export default class GameScene extends Scene {
         }
     }
 
-    async advanceStage(stage) {
+    async advanceStage() {
         this.gameObjects = [];
-        this.events = [];
+        const BLOCK_WIDTH = 50;
+        const BLOCK_HEIGHT = 50;
 
-        const size = 50;
-        const currentStage = this.sceneState.currentStage;
+        const stage = this.sceneState.currentStage;
 
-        this.gameObjects.push(this.spaceship);
-        currentStage.finish.x = stage.finish.x * size
+        for(const wall of stage.walls){
+            this.createWall(wall.x, wall.y, wall.size, wall.speed);
+        }
 
-        this.events.push(this.sceneState.currentStage.finish)
-        for (let i = 0; i < stage.walls.length; i++) {
-            const wall = stage.walls[i];
-            console.log(wall.x)
-            this.createWall(wall.x, wall.y, wall.width, wall.height)
+        for(const asteroid of stage.asteroids){
+            this.createAsteroid(asteroid.x, asteroid.y, asteroid.size, asteroid.speed);
+        }
+
+        for(const rnd of stage.randomSize){
+            this.createAsteroid(rnd.x, rnd.y, rnd.size, rnd.speed);
+        }
+
+        for(const spawner of stage.asteroidSpawner){
+            spawner *= BLOCK_WIDTH;
+            this.events.push(spawner);
         }
 
         this.sceneState.stage += 1;
@@ -113,18 +120,15 @@ export default class GameScene extends Scene {
 
     // game loop
     async loop() {
-        console.log("debug")
         // Raumschiff bewegen
         this.moveSpaceship();
         this.checkBoundaries();
         this.moveWall();
         this.moveAsteroids();
         this.moveEvents();
-
+        this.updateProjectiles();
 
         // Gegner bewegen
-        // this.moveEvents.bind(this);
-        // this.moveAsteroids.bind(this);
         // Kollisionsprüfung
         this.checkCollisions();
         this.checkEvents();
@@ -136,28 +140,27 @@ export default class GameScene extends Scene {
     }
 
     checkEvents() {
-        if (this.events !== undefined) {
-            for (let i = 1; i < this.events.length; i++) {
-                const element = this.events[i];
-                if (element.type == "spawner")
+        if (this.events === undefined)
+            return;
+        for (let i = 1; i < this.events.length; i++) {
+            const element = this.events[i];
+            if (element.type == "spawner")
                 if (element.x <= 0) {
                     this.startAsteroidSpawner();
                     this.events.splice(i, 1)
-                    break;
+                    return;
                 }
-            }
         }
     }
 
     async nextLevel() {
-        const BLOCK_WIDTH = 50
-        if (this.events[0] !== undefined) {
-            var finish = this.events[0]
-            if (finish.x <= 0) {
-                this.spaceship.x = 0
-                this.sceneState.currentStage = await getStage(this.sceneState.stage + 1);
-                await this.advanceStage();
-            }
+        if (this.events[0] === undefined)
+            return;
+        var finish = this.events[0]
+        if (finish.x <= 0) {
+            this.spaceship.x = 0
+            this.sceneState.currentStage = await getStage(this.sceneState.stage + 1);
+            await this.advanceStage();
         }
     }
 
@@ -171,8 +174,7 @@ export default class GameScene extends Scene {
             height * BLOCK_HEIGHT
         );
         wall.build();
-        this.gameObjects.push(wall); // Gegner zum walls-Array hinzufügen
-        super.build()
+        this.registerGameObject(wall);
     }
 
     createAsteroid(x, y, size, speed) {
@@ -185,11 +187,8 @@ export default class GameScene extends Scene {
             -speed
         )
         asteroid.build();
-        this.gameObjects.push(asteroid);
-
-        super.build();
+        this.registerGameObject(asteroid);
     }
-
 
     createRandomAsteroid() {
         const asteroidSize = Math.floor(Math.random() * 30) + 10;
@@ -199,57 +198,52 @@ export default class GameScene extends Scene {
         const asteroidY = Math.floor(Math.random() * (this.view.offsetHeight - asteroidSize));
 
         let asteroid = new Asteroid(
-            this.view.offsetWidth,
-            Math.floor(Math.random() * (this.view.offsetHeight - asteroidSize)),
+            asteroidX,
+            asteroidY,
             asteroidSize,
             asteroidSize,
             -asteroidSpeed
         )
         asteroid.build();
-
-        this.gameObjects.push(asteroid);
-
-        super.build();
-
+        this.registerGameObject(asteroid);
     }
 
     createProjectile() {
-        if (this.canShoot) {
-            const projectile = new Projectile(
-                this.spaceship.x + this.spaceship.width,
-                this.spaceship.y + this.spaceship.height / 2,
-                10,
-                4
-            );
-            projectile.build();
-            this.projectiles.push(projectile);
-            super.build();
-            this.canShoot = false;
+        if (this.canShoot == false)
+            return;
 
-            // Verzögerung für den nächsten Schuss
-            setTimeout(() => {
-                this.canShoot = true;
-            }, 100); // 500 Millisekunden Verzögerung
-        }
+        const projectile = new Projectile(
+            this.spaceship.x + this.spaceship.width,
+            this.spaceship.y + this.spaceship.height / 2,
+            10,
+            4
+        );
+        projectile.build();
+        this.registerProjectile(projectile);
+        this.canShoot = false;
+
+        // Verzögerung für den nächsten Schuss
+        setTimeout(() => {
+            this.canShoot = true;
+        }, 1000); // 500 Millisekunden Verzögerung
     }
 
     updateProjectiles() {
         const projectilesToDelete = []
-        console.log(this.projectiles.length)
-        this.projectiles.forEach((projectile,idx) => {
-            
+
+        this.projectiles.forEach((projectile, idx) => {
             if (projectile.x <= this.view.offsetWidth) {
-                projectile.x += 2;
+                projectile.x += 5;
             } else {
-               // projectilesToDelete.push(idx);
+                projectilesToDelete.push(idx);
             }
-             projectile.update();
+            projectile.update();
         });
-        for(const idx of projectilesToDelete){
+
+        for (const idx of projectilesToDelete) {
             this.projectiles[idx].element.remove();
-            this.projectiles.splice(idx,1);
+            this.projectiles.splice(idx, 1);
         }
-        super.build();
     }
 
     moveEvents() {
@@ -265,7 +259,8 @@ export default class GameScene extends Scene {
             if (this.gameObjects[i] instanceof Wall) {
                 const wall = this.gameObjects[i];
                 const newLeft = wall.x;
-                wall.x = newLeft - 2;
+                // change to newLeft - 2;
+                wall.x = newLeft;
                 wall.update();
             }
         }
@@ -283,7 +278,7 @@ export default class GameScene extends Scene {
 
     moveAsteroids() {
         const asteroidsToDelete = [];
-        this.gameObjects.forEach((gameObject,idx) => {
+        this.gameObjects.forEach((gameObject, idx) => {
             if (gameObject instanceof Asteroid) {
                 let asteroid = gameObject;
                 asteroid.x += asteroid.speed;
@@ -299,9 +294,9 @@ export default class GameScene extends Scene {
                 }
             }
         });
-        for( const idx of asteroidsToDelete ){
+        for (const idx of asteroidsToDelete) {
             this.gameObjects[idx].element.remove();
-            this.gameObjects.splice(idx,1)
+            this.gameObjects.splice(idx, 1)
         }
     }
 
@@ -320,7 +315,7 @@ export default class GameScene extends Scene {
                 if (this.spaceship.intersect(elementRect)) {
                     // Kollision zwischen Raumschiff und Gegner
                     console.log("boom")
-                    console.log(this.spaceship.x,this.spaceship.y,elementRect.x,elementRect.y)
+                    console.log(this.spaceship.x, this.spaceship.y, elementRect.x, elementRect.y)
                     endGame();
                     return;
                 }
@@ -350,7 +345,7 @@ export default class GameScene extends Scene {
     }
 
     moveSpaceship() {
-        const spaceshipSpeed = 5;
+        const spaceshipSpeed = 3;
         if (this.keys['ArrowUp']) {
             // Bewegungslogik für nach oben
             this.spaceship.y -= spaceshipSpeed;
@@ -372,7 +367,7 @@ export default class GameScene extends Scene {
             // Schießen eines Projektils
             this.createProjectile();
         }
-            this.spaceship.update();
+        this.spaceship.update();
     }
 
     gameOverCollision() {

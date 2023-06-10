@@ -28,14 +28,20 @@ export default class Scene {
         for(const component of this.components){
             this.view.append(component);
         }
-
-        for(const projectile of this.projectiles){
-            this.view.append(projectile.element)
-        }
-    }
+     }
 
     draw(){
         requestAnimationFrame(this.loop.bind(this));
+    }
+
+    registerGameObject(gameObject){
+        this.gameObjects.push(gameObject);
+        this.view.append(gameObject.element);
+    }
+
+    registerProjectile(projectile){
+        this.projectiles.push(projectile);
+        this.view.append(projectile.element);
     }
 
     loop(){
