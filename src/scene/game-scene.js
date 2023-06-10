@@ -37,6 +37,7 @@ export default class GameScene extends Scene {
         // reset gameObjects and components
         this.components = [];
         this.gameObjects = [];
+        this.startAsteroidSpawner();
 
         // register eventhandlers
         document.addEventListener("keydown", this.handleKeyDown.bind(this));
@@ -113,6 +114,8 @@ export default class GameScene extends Scene {
         this.moveEvents();
         this.updateProjectiles(this.playerOneShip);
         this.updateProjectiles(this.playerTwoShip);
+        this.checkProjectileCollision(this.playerOneShip);
+        this.checkProjectileCollision(this.playerTwoShip);
         this.moveFinish();
 
         // Gegner bewegen
@@ -177,7 +180,7 @@ export default class GameScene extends Scene {
 
     createRandomAsteroid() {
         const asteroidSize = Math.floor(Math.random() * 30) + 10;
-        const asteroidSpeed = Math.random() * 10;
+        const asteroidSpeed = Math.random();
 
         const asteroidX = this.view.offsetWidth;
         const asteroidY = Math.floor(Math.random() * (this.view.offsetHeight - asteroidSize));
@@ -249,7 +252,7 @@ export default class GameScene extends Scene {
         for (var i = 0; i < this.gameObjects.length; i++) {
             if (this.gameObjects[i] instanceof Wall) {
                 const wall = this.gameObjects[i];
-                const newLeft = wall.x-2;
+                const newLeft = wall.x-1;
                 wall.x = newLeft;
                 wall.update();
             }
@@ -261,7 +264,7 @@ export default class GameScene extends Scene {
         this.gameObjects.forEach((gameObject, idx) => {
             if (gameObject instanceof Asteroid) {
                 let asteroid = gameObject;
-                asteroid.x += asteroid.speed;
+                asteroid.x -= 2;   //ÄNDERUNG von astroid.speed
 
                 console.log(gameObject);
                 // Überprüfe, ob der Asteroid das Spielfeld verlassen hat
@@ -303,6 +306,39 @@ export default class GameScene extends Scene {
             }
         }
     }
+
+    // Destroy astroids with projectiles duo to collision
+    checkProjectileCollision(player) {
+        const projectilesToDelete = [];
+        const asteroidsToDelete = [];
+
+        player.projectiles.forEach((projectile, projectileIdx) => {
+            this.gameObjects.forEach((gameObject, asteroidIdx) => {
+                if (gameObject instanceof Asteroid) {
+                    const projectileRect = projectile.element.getBoundingClientRect();
+
+                    if (gameObject.intersect(projectileRect)) {
+                        projectilesToDelete.push(projectileIdx);
+                        asteroidsToDelete.push(asteroidIdx);
+                        return;
+                    }
+                }
+            });
+        });
+
+        for (const idx of projectilesToDelete) {
+            player.projectiles[idx].element.remove();
+            player.projectiles.splice(idx, 1);
+        }
+
+        for (const idx of asteroidsToDelete) {
+            this.gameObjects[idx].element.remove();
+            this.gameObjects.splice(idx, 1);
+        }
+    }
+
+
+
 
     checkBoundaries() {
         const bounding_box = this.view.getBoundingClientRect();
