@@ -37,7 +37,6 @@ export default class GameScene extends Scene {
         // reset gameObjects and components
         this.components = [];
         this.gameObjects = [];
-        this.startAsteroidSpawner();
 
         // register eventhandlers
         document.addEventListener("keydown", this.handleKeyDown.bind(this));
@@ -124,7 +123,7 @@ export default class GameScene extends Scene {
         this.checkEvents();
 
         console.log(this.finish)
-        if (this.finish*50 <=0)
+        if (this.finish <=0)
         await this.nextLevel();
         // Spiel-Loop wiederholen
         if (!this.gameOver)
@@ -172,7 +171,7 @@ export default class GameScene extends Scene {
             x * BLOCK_WIDTH,
             y * BLOCK_HEIGHT,
             size,
-            -speed
+            speed
         )
         asteroid.build();
         this.registerGameObject(asteroid);
@@ -190,7 +189,7 @@ export default class GameScene extends Scene {
             asteroidY,
             asteroidSize,
             asteroidSize,
-            -asteroidSpeed
+            asteroidSpeed
         )
         asteroid.build();
         this.registerGameObject(asteroid);
@@ -252,7 +251,7 @@ export default class GameScene extends Scene {
         for (var i = 0; i < this.gameObjects.length; i++) {
             if (this.gameObjects[i] instanceof Wall) {
                 const wall = this.gameObjects[i];
-                const newLeft = wall.x-1;
+                const newLeft = wall.x-2;
                 wall.x = newLeft;
                 wall.update();
             }
@@ -264,7 +263,7 @@ export default class GameScene extends Scene {
         this.gameObjects.forEach((gameObject, idx) => {
             if (gameObject instanceof Asteroid) {
                 let asteroid = gameObject;
-                asteroid.x -= 2;   //ÄNDERUNG von astroid.speed
+                asteroid.x -= asteroid.speed;   //ÄNDERUNG von astroid.speed
 
                 console.log(gameObject);
                 // Überprüfe, ob der Asteroid das Spielfeld verlassen hat
