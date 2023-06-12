@@ -88,7 +88,8 @@ export default class GameScene extends Scene {
 
         if (stage.randomSize !== undefined) {
             for (const rnd of stage.randomSize) {
-                this.createAsteroid(rnd.x, rnd.y, rnd.size, rnd.speed);
+                let size= Math.random()*(BLOCK_WIDTH-10)+10
+                this.createAsteroid(rnd.x, rnd.y,size, rnd.speed);
             }
         }
 
@@ -126,8 +127,10 @@ export default class GameScene extends Scene {
         if (this.finish <=0)
         await this.nextLevel();
         // Spiel-Loop wiederholen
-        if (!this.gameOver)
-            requestAnimationFrame(this.loop.bind(this));
+        
+        if (!this.gameOver) {
+            setInterval(requestAnimationFrame(this.loop.bind(this)), 5000);
+          }
     }
 
     checkEvents() {
@@ -213,7 +216,7 @@ export default class GameScene extends Scene {
         // Verzögerung für den nächsten Schuss
         setTimeout(() => {
             player.canShoot = true;
-        }, 1000); // 500 Millisekunden Verzögerung
+        }, 300); // 500 Millisekunden Verzögerung
     }
 
     updateProjectiles(player) {
@@ -232,6 +235,7 @@ export default class GameScene extends Scene {
         for (const idx of projectilesToDelete) {
             player.projectiles[idx].element.remove();
             player.projectiles.splice(idx, 1);
+            break;
         }
     }
 
@@ -248,14 +252,29 @@ export default class GameScene extends Scene {
     }
 
     moveWall() {
-        for (var i = 0; i < this.gameObjects.length; i++) {
-            if (this.gameObjects[i] instanceof Wall) {
-                const wall = this.gameObjects[i];
-                const newLeft = wall.x-2;
-                wall.x = newLeft;
-                wall.update();
+        const wallsToDelete=[]
+        this.gameObjects.forEach((gameObject,idx) => {
+            if (gameObject instanceof Wall) {
+                let wall = gameObject;
+                wall.x -= 2;
+                
+                if (wall.x + wall.width < 0) {
+                    // Asteroid hat das Spielfeld verlassen, daher entfernen
+                    wallsToDelete.push(idx)
+
+                } else {
+                    // Aktualisiere die Position des Asteroiden im DOM
+                    wall.update();
+                }
             }
-        }
+
+           
+        });
+         for (const idx of wallsToDelete) {
+                this.gameObjects[idx].element.remove();
+                this.gameObjects.splice(idx, 1)
+                break;
+            }
     }
 
     moveAsteroids() {
@@ -277,9 +296,12 @@ export default class GameScene extends Scene {
                 }
             }
         });
+
+        console.log(asteroidsToDelete.length)
         for (const idx of asteroidsToDelete) {
             this.gameObjects[idx].element.remove();
             this.gameObjects.splice(idx, 1)
+            break;
         }
     }
 
@@ -306,7 +328,7 @@ export default class GameScene extends Scene {
         }
     }
 
-    // Destroy astroids with projectiles duo to collision
+    // Destroy astroids with projectiles due to collision
     checkProjectileCollision(player) {
         const projectilesToDelete = [];
         const asteroidsToDelete = [];
@@ -328,11 +350,13 @@ export default class GameScene extends Scene {
         for (const idx of projectilesToDelete) {
             player.projectiles[idx].element.remove();
             player.projectiles.splice(idx, 1);
+            break;
         }
 
         for (const idx of asteroidsToDelete) {
             this.gameObjects[idx].element.remove();
             this.gameObjects.splice(idx, 1);
+            break;
         }
     }
 

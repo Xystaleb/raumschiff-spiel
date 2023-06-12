@@ -31,7 +31,7 @@ export default class Scene {
      }
 
     draw(){
-        requestAnimationFrame(this.loop.bind(this));
+        setInterval(requestAnimationFrame(this.loop.bind(this)),2000);
     }
 
     registerGameObject(gameObject){
