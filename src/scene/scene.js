@@ -34,6 +34,11 @@ export default class Scene {
         requestAnimationFrame(this.loop.bind(this));
     }
 
+    registerComponent(component){
+        this.components.push(component);
+        this.view.append(component);
+    }
+
     registerGameObject(gameObject){
         this.gameObjects.push(gameObject);
         this.view.append(gameObject.element);
