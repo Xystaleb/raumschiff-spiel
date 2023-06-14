@@ -84,7 +84,7 @@ export default class GameScene extends Scene {
         const BLOCK_WIDTH = 50;
 
         const stage = this.sceneState.currentStage;
-        this.finish = stage.finish * BLOCK_WIDTH;
+        this.finish = stage.finish*BLOCK_WIDTH;
 
         for (const wall of stage.walls) {
             this.createWall(wall.x, wall.y, wall.width, wall.height);

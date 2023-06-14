@@ -10,7 +10,7 @@ export default class MenuScene extends Scene {
         buttonSingleplayer.innerText = "Klick mich fuer singleplayer";
 
         const buttonMultiplayer = document.createElement("button");
-        buttonMultiplayer.innerText = "Klick mich fuer singleplayer";
+        buttonMultiplayer.innerText = "Klick mich fuer multiplayer";
 
         buttonSingleplayer.addEventListener("click", () => {
             this.startPlaying(true);
