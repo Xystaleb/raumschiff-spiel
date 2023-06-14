@@ -6,9 +6,9 @@ import Projectile from "../models/projectile.js";
 import { getStage } from "../level-helper.js";
 
 export default class GameScene extends Scene {
-    constructor(view, boolean) {
+    constructor(view, playerState) {
         super(view);
-        this.singlePlayer = boolean; // boolean zum übergeben ob multiplayer, oder singleplayer
+        this.singlePlayer = playerState; // boolean zum übergeben ob multiplayer, oder singleplayer
         this.ratio = view.offsetWidth / view.offsetHeight;
         this.sceneState = {
             stage: 1,
@@ -67,9 +67,6 @@ export default class GameScene extends Scene {
             this.gameObjects.push(this.playerTwoShip);
         }
 
-
-
-
         await this.initStage();
         super.build();
     }
@@ -112,7 +109,6 @@ export default class GameScene extends Scene {
 
         this.sceneState.stage += 1;
     }
-
 
     // game loop
     async loop() {
@@ -377,9 +373,6 @@ export default class GameScene extends Scene {
         }
     }
 
-
-
-
     checkBoundaries() {
         const bounding_box = this.view.getBoundingClientRect();
         const spaceship = this.playerOneShip;
@@ -452,13 +445,7 @@ export default class GameScene extends Scene {
             }
             this.playerTwoShip.update();
         }
-
-
-
     }
-
-
-
 
     async endGame() {
         // score in den local storage schreiben

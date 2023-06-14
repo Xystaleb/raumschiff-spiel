@@ -8,11 +8,53 @@ body {
   /* Verhindert das Scrollen der Seite */
 }
 
+.leaderboard {
+  padding: 0.5rem;
+  margin: 0.5rem;
+  overflow-y: scroll;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th {
+  background-color: gray;
+}
+
+tbody:nth-child(odd) td{
+  background-color: lightgreen;
+}
+
+.centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
 .game-area {
   background-color: #000;
   /* Hintergrundfarbe des Spiels */
   margin: 0;
+}
+
+.main-menu {
+  padding: 0.5rem;
+  margin: 0.5rem;
+  width: 250px;
+  height: 350px;
+  background-color: lightgray;
+  border-radius: 0.5rem;
+  display: grid;
+  justify-content: center;
+  border: 1px solid black;
+}
+
+.button {
+  margin: 2rem;
+  width: 100px;
+  height: 40px;
 }
 
 .spaceship {

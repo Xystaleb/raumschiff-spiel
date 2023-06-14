@@ -34,6 +34,11 @@ export default class Scene {
         setInterval(requestAnimationFrame(this.loop.bind(this)),2000);
     }
 
+    registerComponent(component){
+        this.components.push(component);
+        this.view.append(component);
+    }
+
     registerGameObject(gameObject){
         this.gameObjects.push(gameObject);
         this.view.append(gameObject.element);
