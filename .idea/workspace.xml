@@ -4,6 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
+    <list default="true" id="99babcb6-1a71-4257-baed-f8b477c6a823" name="Changes" comment="randomasteroidsize min 30px">
     <list default="true" id="99babcb6-1a71-4257-baed-f8b477c6a823" name="Changes" comment="asteroiden hinzufügen">
       <change afterPath="$PROJECT_DIR$/src/models/Projectile.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
@@ -85,6 +86,16 @@
       <workItem from="1686224637774" duration="6308000" />
       <workItem from="1686233669977" duration="433000" />
       <workItem from="1686234115573" duration="5337000" />
+      <workItem from="1686405898740" duration="5043000" />
+      <workItem from="1686417091901" duration="91000" />
+      <workItem from="1686425854872" duration="42000" />
+      <workItem from="1686430927002" duration="160000" />
+      <workItem from="1686435475839" duration="1314000" />
+      <workItem from="1686475701204" duration="380000" />
+      <workItem from="1686481711586" duration="21000" />
+      <workItem from="1686506644892" duration="2212000" />
+      <workItem from="1686556572134" duration="1126000" />
+      <workItem from="1686558130161" duration="3928000" />
       <workItem from="1686405898740" duration="4789000" />
       <workItem from="1686749437780" duration="6059000" />
     </task>
@@ -95,7 +106,21 @@
       <option name="project" value="LOCAL" />
       <updated>1686213679117</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="projectiles destroy astroids now.">
+      <created>1686414612543</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1686414612543</updated>
+    </task>
+    <task id="LOCAL-00003" summary="randomasteroidsize min 30px">
+      <created>1686414831338</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1686414831338</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -127,6 +152,8 @@
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="asteroiden hinzufügen" />
-    <option name="LAST_COMMIT_MESSAGE" value="asteroiden hinzufügen" />
+    <MESSAGE value="projectiles destroy astroids now." />
+    <MESSAGE value="randomasteroidsize min 30px" />
+    <option name="LAST_COMMIT_MESSAGE" value="randomasteroidsize min 30px" />
   </component>
 </project>
