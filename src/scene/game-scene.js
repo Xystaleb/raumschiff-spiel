@@ -6,8 +6,9 @@ import Projectile from "../models/projectile.js";
 import { getStage } from "../level-helper.js";
 
 export default class GameScene extends Scene {
-    constructor(view) {
+    constructor(view, boolean) {
         super(view);
+        this.singlePlayer = boolean; // boolean zum übergeben ob multiplayer, oder singleplayer
         this.ratio = view.offsetWidth / view.offsetHeight;
         this.sceneState = {
             stage: 1,
@@ -38,28 +39,37 @@ export default class GameScene extends Scene {
         this.components = [];
         this.gameObjects = [];
 
+        console.log(this.singlePlayer)
+
         // register eventhandlers
         document.addEventListener("keydown", this.handleKeyDown.bind(this));
         document.addEventListener("keyup", this.handleKeyUp.bind(this));
 
         const BLOCK_WIDTH = 50;
         const BLOCK_HEIGHT = 50;
-        if (!this.playerOneShip) {
-            this.playerOneShip = new Ship(
-                BLOCK_WIDTH,
-                8 * BLOCK_HEIGHT,
-                this.ratio
-            );
+
+        this.playerOneShip = new Ship(
+            BLOCK_WIDTH,
+            8 * BLOCK_HEIGHT,
+            this.ratio
+        );
+        this.playerOneShip.build();
+        this.gameObjects.push(this.playerOneShip);
+
+        if (!this.singlePlayer) {
             this.playerTwoShip = new Ship(
                 BLOCK_WIDTH,
                 8 * BLOCK_HEIGHT,
                 this.ratio
             );
-            this.playerOneShip.build();
+
             this.playerTwoShip.build();
+            this.gameObjects.push(this.playerTwoShip);
         }
-        this.gameObjects.push(this.playerOneShip);
-        this.gameObjects.push(this.playerTwoShip);
+
+
+
+
         await this.initStage();
         super.build();
     }
@@ -80,7 +90,7 @@ export default class GameScene extends Scene {
             this.createWall(wall.x, wall.y, wall.width, wall.height);
         }
 
-        if(stage.asteroids){
+        if (stage.asteroids) {
             for (const asteroid of stage.asteroids) {
                 this.createAsteroid(asteroid.x, asteroid.y, asteroid.size, asteroid.speed);
             }
@@ -88,7 +98,8 @@ export default class GameScene extends Scene {
 
         if (stage.randomSize !== undefined) {
             for (const rnd of stage.randomSize) {
-                this.createAsteroid(rnd.x, rnd.y, rnd.size, rnd.speed);
+                let size = Math.random() * (BLOCK_WIDTH - 20) + 20
+                this.createAsteroid(rnd.x, rnd.y, size, rnd.speed);
             }
         }
 
@@ -112,9 +123,13 @@ export default class GameScene extends Scene {
         this.moveAsteroids();
         this.moveEvents();
         this.updateProjectiles(this.playerOneShip);
-        this.updateProjectiles(this.playerTwoShip);
+        if (!this.singlePlayer) {
+            this.updateProjectiles(this.playerTwoShip);
+        }
         this.checkProjectileCollision(this.playerOneShip);
-        this.checkProjectileCollision(this.playerTwoShip);
+        if (!this.singlePlayer) {
+            this.checkProjectileCollision(this.playerTwoShip);
+        }
         this.moveFinish();
 
         // Gegner bewegen
@@ -122,9 +137,8 @@ export default class GameScene extends Scene {
         this.checkCollisions();
         this.checkEvents();
 
-        console.log(this.finish)
-        if (this.finish <=0)
-        await this.nextLevel();
+        if (this.finish <= 0)
+            await this.nextLevel();
         // Spiel-Loop wiederholen
         if (!this.gameOver)
             requestAnimationFrame(this.loop.bind(this));
@@ -145,10 +159,10 @@ export default class GameScene extends Scene {
     }
 
     async nextLevel() {
-            this.playerOneShip.x = 0
-            this.sceneState.currentStage = await getStage(this.sceneState.stage + 1);
-            await this.initializeStage();
-        
+        this.playerOneShip.x = 0
+        this.sceneState.currentStage = await getStage(this.sceneState.stage + 1);
+        await this.initializeStage();
+
     }
 
     createWall(x, y, width, height) {
@@ -213,7 +227,7 @@ export default class GameScene extends Scene {
         // Verzögerung für den nächsten Schuss
         setTimeout(() => {
             player.canShoot = true;
-        }, 1000); // 500 Millisekunden Verzögerung
+        }, 300); // 500 Millisekunden Verzögerung
     }
 
     updateProjectiles(player) {
@@ -232,6 +246,7 @@ export default class GameScene extends Scene {
         for (const idx of projectilesToDelete) {
             player.projectiles[idx].element.remove();
             player.projectiles.splice(idx, 1);
+            break;
         }
     }
 
@@ -248,13 +263,28 @@ export default class GameScene extends Scene {
     }
 
     moveWall() {
-        for (var i = 0; i < this.gameObjects.length; i++) {
-            if (this.gameObjects[i] instanceof Wall) {
-                const wall = this.gameObjects[i];
-                const newLeft = wall.x-2;
-                wall.x = newLeft;
-                wall.update();
+        const wallsToDelete = []
+        this.gameObjects.forEach((gameObject, idx) => {
+            if (gameObject instanceof Wall) {
+                let wall = gameObject;
+                wall.x -= 2;
+
+                if (wall.x + wall.width < 0) {
+                    // Asteroid hat das Spielfeld verlassen, daher entfernen
+                    wallsToDelete.push(idx)
+
+                } else {
+                    // Aktualisiere die Position des Asteroiden im DOM
+                    wall.update();
+                }
             }
+
+
+        });
+        for (const idx of wallsToDelete) {
+            this.gameObjects[idx].element.remove();
+            this.gameObjects.splice(idx, 1)
+            break;
         }
     }
 
@@ -265,7 +295,6 @@ export default class GameScene extends Scene {
                 let asteroid = gameObject;
                 asteroid.x -= asteroid.speed;   //ÄNDERUNG von astroid.speed
 
-                console.log(gameObject);
                 // Überprüfe, ob der Asteroid das Spielfeld verlassen hat
                 if (asteroid.x + asteroid.width < 0) {
                     // Asteroid hat das Spielfeld verlassen, daher entfernen
@@ -280,6 +309,7 @@ export default class GameScene extends Scene {
         for (const idx of asteroidsToDelete) {
             this.gameObjects[idx].element.remove();
             this.gameObjects.splice(idx, 1)
+            break;
         }
     }
 
@@ -306,7 +336,7 @@ export default class GameScene extends Scene {
         }
     }
 
-    // Destroy astroids with projectiles duo to collision
+    // Destroy astroids with projectiles due to collision
     checkProjectileCollision(player) {
         const projectilesToDelete = [];
         const asteroidsToDelete = [];
@@ -322,17 +352,28 @@ export default class GameScene extends Scene {
                         return;
                     }
                 }
+
+                if (gameObject instanceof Wall) {
+                    const projectileRect = projectile.element.getBoundingClientRect();
+
+                    if (gameObject.intersect(projectileRect)) {
+                        projectilesToDelete.push(projectileIdx);
+                        return;
+                    }
+                }
             });
         });
 
         for (const idx of projectilesToDelete) {
             player.projectiles[idx].element.remove();
             player.projectiles.splice(idx, 1);
+            break;
         }
 
         for (const idx of asteroidsToDelete) {
             this.gameObjects[idx].element.remove();
             this.gameObjects.splice(idx, 1);
+            break;
         }
     }
 
@@ -362,20 +403,21 @@ export default class GameScene extends Scene {
 
     moveSpaceship() {
         const spaceshipSpeed = 5;
-        if (this.keys['ArrowUp']) {
+
+        if (this.keys['w']) {
             // Bewegungslogik für nach oben
             this.playerOneShip.y -= spaceshipSpeed;
         }
-        if (this.keys['ArrowDown']) {
+        if (this.keys['s']) {
             // Bewegungslogik für nach unten
             this.playerOneShip.y += spaceshipSpeed;
         }
 
-        if (this.keys['ArrowLeft']) {
+        if (this.keys['a']) {
             // Bewegungslogik für nach oben
             this.playerOneShip.x -= spaceshipSpeed;
         }
-        if (this.keys['ArrowRight']) {
+        if (this.keys['d']) {
             // Bewegungslogik für nach unten
             this.playerOneShip.x += spaceshipSpeed;
         }
@@ -383,30 +425,41 @@ export default class GameScene extends Scene {
             // Schießen eines Projektils
             this.createProjectile(this.playerOneShip);
         }
-        if (this.keys['Enter'] && this.playerTwoShip.canShoot) {
-            // Schießen eines Projektils
-            this.createProjectile(this.playerTwoShip);
-        }
+
         this.playerOneShip.update();
-    }
 
-    gameOverCollision() {
-        console.log(this.gameObjects.length);
-        for (var i = 0; i < this.gameObjects; i++) {
-            const current = array[i];
-            // do not intersect with the ship
-            if (current instanceof Ship)
-                continue;
-            const elementRect = current.element.getBoundingClientRect();
-
-            if (this.playerOneShip.intersect(elementRect)) {
-                // Kollision zwischen Raumschiff und Gegner
-                console.log('Kollision!');
-                endGame();
-                break;
+        if (!this.singlePlayer) {
+            if (this.keys['ArrowUp']) {
+                // Bewegungslogik für nach oben
+                this.playerTwoShip.y -= spaceshipSpeed;
             }
+            if (this.keys['ArrowDown']) {
+                // Bewegungslogik für nach unten
+                this.playerTwoShip.y += spaceshipSpeed;
+            }
+
+            if (this.keys['ArrowLeft']) {
+                // Bewegungslogik für nach oben
+                this.playerTwoShip.x -= spaceshipSpeed;
+            }
+            if (this.keys['ArrowRight']) {
+                // Bewegungslogik für nach unten
+                this.playerTwoShip.x += spaceshipSpeed;
+            }
+            if (this.keys['Enter'] && this.playerTwoShip.canShoot) {
+                // Schießen eines Projektils
+                this.createProjectile(this.playerTwoShip);
+            }
+            this.playerTwoShip.update();
         }
+
+
+
     }
+
+
+
+
     async endGame() {
         // score in den local storage schreiben
         // und spaeter in der endGameScene wiederholen

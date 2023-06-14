@@ -1,5 +1,6 @@
 import LeaderboardService from "../services/leaderboard-service.js";
 import Scene from "./scene.js";
+import GameScene from "./game-scene.js";
 
 export default class MenuScene extends Scene {
     constructor(view){
@@ -11,7 +12,30 @@ export default class MenuScene extends Scene {
         )
     }
 
+    startPlaying(playerState) {
+        var gameScene = new GameScene(this.view, playerState); // Übergabe welcher button gedrückt wurde
+        gameScene.build();
+        gameScene.draw();
+    }
+
     async build(){
+        const buttonSingleplayer = document.createElement("button");
+        buttonSingleplayer.innerText = "Klick mich fuer singleplayer";
+
+        const buttonMultiplayer = document.createElement("button");
+        buttonMultiplayer.innerText = "Klick mich fuer multiplayer";
+
+        buttonSingleplayer.addEventListener("click", () => {
+            this.startPlaying(true);
+        });
+
+        buttonMultiplayer.addEventListener("click", () => {
+            this.startPlaying(false);
+        });
+
+        this.registerComponent(buttonSingleplayer);
+        this.registerComponent(buttonMultiplayer);
+
         let leaderboard_entries = await this.leaderboardService.getLeaderboard()
         this.view.className = "centered";
 
@@ -58,7 +82,6 @@ export default class MenuScene extends Scene {
         menu.appendChild(tutorialButton);
         menu.appendChild(levelOneBUtton);
         main.appendChild(menu);
-        main.appendChild(leaderboard);
 
         this.registerComponent(main);
         super.build();
