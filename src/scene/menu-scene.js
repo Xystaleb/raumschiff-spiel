@@ -65,6 +65,7 @@ export default class MenuScene extends Scene {
                 </tr>
                 `
         }
+
         leaderboard.appendChild(leaderboard_list)
 
         let main = document.createElement("div");
@@ -83,6 +84,7 @@ export default class MenuScene extends Scene {
         menu.appendChild(levelOneBUtton);
         main.appendChild(menu);
 
+        this.registerComponent(leaderboard);
         this.registerComponent(main);
         super.build();
     }
