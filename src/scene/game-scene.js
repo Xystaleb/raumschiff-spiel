@@ -47,22 +47,29 @@ export default class GameScene extends Scene {
 
         const BLOCK_WIDTH = 50;
         const BLOCK_HEIGHT = 50;
-        if (!this.playerOneShip) {
-            this.playerOneShip = new Ship(
-                BLOCK_WIDTH,
-                8 * BLOCK_HEIGHT,
-                this.ratio
-            );
+
+        this.playerOneShip = new Ship(
+            BLOCK_WIDTH,
+            8 * BLOCK_HEIGHT,
+            this.ratio
+        );
+        this.playerOneShip.build();
+        this.gameObjects.push(this.playerOneShip);
+
+        if (!this.singlePlayer) {
             this.playerTwoShip = new Ship(
                 BLOCK_WIDTH,
                 8 * BLOCK_HEIGHT,
                 this.ratio
             );
-            this.playerOneShip.build();
+
             this.playerTwoShip.build();
+            this.gameObjects.push(this.playerTwoShip);
         }
-        this.gameObjects.push(this.playerOneShip);
-        this.gameObjects.push(this.playerTwoShip);
+
+
+
+
         await this.initStage();
         super.build();
     }
@@ -77,13 +84,13 @@ export default class GameScene extends Scene {
         const BLOCK_WIDTH = 50;
 
         const stage = this.sceneState.currentStage;
-        this.finish = stage.finish*BLOCK_WIDTH;
+        this.finish = stage.finish * BLOCK_WIDTH;
 
         for (const wall of stage.walls) {
             this.createWall(wall.x, wall.y, wall.width, wall.height);
         }
 
-        if(stage.asteroids){
+        if (stage.asteroids) {
             for (const asteroid of stage.asteroids) {
                 this.createAsteroid(asteroid.x, asteroid.y, asteroid.size, asteroid.speed);
             }
@@ -91,8 +98,8 @@ export default class GameScene extends Scene {
 
         if (stage.randomSize !== undefined) {
             for (const rnd of stage.randomSize) {
-                let size= Math.random()*(BLOCK_WIDTH-10)+10
-                this.createAsteroid(rnd.x, rnd.y,size, rnd.speed);
+                let size = Math.random() * (BLOCK_WIDTH - 20) + 20
+                this.createAsteroid(rnd.x, rnd.y, size, rnd.speed);
             }
         }
 
@@ -116,9 +123,13 @@ export default class GameScene extends Scene {
         this.moveAsteroids();
         this.moveEvents();
         this.updateProjectiles(this.playerOneShip);
-        this.updateProjectiles(this.playerTwoShip);
+        if (!this.singlePlayer) {
+            this.updateProjectiles(this.playerTwoShip);
+        }
         this.checkProjectileCollision(this.playerOneShip);
-        this.checkProjectileCollision(this.playerTwoShip);
+        if (!this.singlePlayer) {
+            this.checkProjectileCollision(this.playerTwoShip);
+        }
         this.moveFinish();
 
         // Gegner bewegen
@@ -148,9 +159,9 @@ export default class GameScene extends Scene {
     }
 
     async nextLevel() {
-            this.playerOneShip.x = 0
-            this.sceneState.currentStage = await getStage(this.sceneState.stage + 1);
-            await this.initializeStage();
+        this.playerOneShip.x = 0
+        this.sceneState.currentStage = await getStage(this.sceneState.stage + 1);
+        await this.initializeStage();
 
     }
 
@@ -252,12 +263,12 @@ export default class GameScene extends Scene {
     }
 
     moveWall() {
-        const wallsToDelete=[]
-        this.gameObjects.forEach((gameObject,idx) => {
+        const wallsToDelete = []
+        this.gameObjects.forEach((gameObject, idx) => {
             if (gameObject instanceof Wall) {
                 let wall = gameObject;
                 wall.x -= 2;
-                
+
                 if (wall.x + wall.width < 0) {
                     // Asteroid hat das Spielfeld verlassen, daher entfernen
                     wallsToDelete.push(idx)
@@ -268,13 +279,13 @@ export default class GameScene extends Scene {
                 }
             }
 
-           
+
         });
-         for (const idx of wallsToDelete) {
-                this.gameObjects[idx].element.remove();
-                this.gameObjects.splice(idx, 1)
-                break;
-            }
+        for (const idx of wallsToDelete) {
+            this.gameObjects[idx].element.remove();
+            this.gameObjects.splice(idx, 1)
+            break;
+        }
     }
 
     moveAsteroids() {
@@ -415,30 +426,34 @@ export default class GameScene extends Scene {
             this.createProjectile(this.playerOneShip);
         }
 
-        if (this.keys['ArrowUp']) {
-            // Bewegungslogik für nach oben
-            this.playerTwoShip.y -= spaceshipSpeed;
-        }
-        if (this.keys['ArrowDown']) {
-            // Bewegungslogik für nach unten
-            this.playerTwoShip.y += spaceshipSpeed;
-        }
-
-        if (this.keys['ArrowLeft']) {
-            // Bewegungslogik für nach oben
-            this.playerTwoShip.x -= spaceshipSpeed;
-        }
-        if (this.keys['ArrowRight']) {
-            // Bewegungslogik für nach unten
-            this.playerTwoShip.x += spaceshipSpeed;
-        }
-        if (this.keys['Enter'] && this.playerTwoShip.canShoot) {
-            // Schießen eines Projektils
-            this.createProjectile(this.playerTwoShip);
-        }
-
         this.playerOneShip.update();
-        this.playerTwoShip.update();
+
+        if (!this.singlePlayer) {
+            if (this.keys['ArrowUp']) {
+                // Bewegungslogik für nach oben
+                this.playerTwoShip.y -= spaceshipSpeed;
+            }
+            if (this.keys['ArrowDown']) {
+                // Bewegungslogik für nach unten
+                this.playerTwoShip.y += spaceshipSpeed;
+            }
+
+            if (this.keys['ArrowLeft']) {
+                // Bewegungslogik für nach oben
+                this.playerTwoShip.x -= spaceshipSpeed;
+            }
+            if (this.keys['ArrowRight']) {
+                // Bewegungslogik für nach unten
+                this.playerTwoShip.x += spaceshipSpeed;
+            }
+            if (this.keys['Enter'] && this.playerTwoShip.canShoot) {
+                // Schießen eines Projektils
+                this.createProjectile(this.playerTwoShip);
+            }
+            this.playerTwoShip.update();
+        }
+
+
 
     }
 
