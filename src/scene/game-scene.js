@@ -6,8 +6,9 @@ import Projectile from "../models/projectile.js";
 import { getStage } from "../level-helper.js";
 
 export default class GameScene extends Scene {
-    constructor(view) {
+    constructor(view, boolean) {
         super(view);
+        this.singlePlayer = boolean; // boolean zum übergeben ob multiplayer, oder singleplayer
         this.ratio = view.offsetWidth / view.offsetHeight;
         this.sceneState = {
             stage: 1,
@@ -37,6 +38,8 @@ export default class GameScene extends Scene {
         // reset gameObjects and components
         this.components = [];
         this.gameObjects = [];
+
+        console.log(this.singlePlayer)
 
         // register eventhandlers
         document.addEventListener("keydown", this.handleKeyDown.bind(this));
@@ -122,7 +125,6 @@ export default class GameScene extends Scene {
         this.checkCollisions();
         this.checkEvents();
 
-        console.log(this.finish)
         if (this.finish <=0)
         await this.nextLevel();
         // Spiel-Loop wiederholen
@@ -265,7 +267,6 @@ export default class GameScene extends Scene {
                 let asteroid = gameObject;
                 asteroid.x -= asteroid.speed;   //ÄNDERUNG von astroid.speed
 
-                console.log(gameObject);
                 // Überprüfe, ob der Asteroid das Spielfeld verlassen hat
                 if (asteroid.x + asteroid.width < 0) {
                     // Asteroid hat das Spielfeld verlassen, daher entfernen
@@ -390,23 +391,7 @@ export default class GameScene extends Scene {
         this.playerOneShip.update();
     }
 
-    gameOverCollision() {
-        console.log(this.gameObjects.length);
-        for (var i = 0; i < this.gameObjects; i++) {
-            const current = array[i];
-            // do not intersect with the ship
-            if (current instanceof Ship)
-                continue;
-            const elementRect = current.element.getBoundingClientRect();
 
-            if (this.playerOneShip.intersect(elementRect)) {
-                // Kollision zwischen Raumschiff und Gegner
-                console.log('Kollision!');
-                endGame();
-                break;
-            }
-        }
-    }
     async endGame() {
         // score in den local storage schreiben
         // und spaeter in der endGameScene wiederholen
