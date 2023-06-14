@@ -284,7 +284,6 @@ export default class GameScene extends Scene {
                 let asteroid = gameObject;
                 asteroid.x -= asteroid.speed;   //ÄNDERUNG von astroid.speed
 
-                console.log(gameObject);
                 // Überprüfe, ob der Asteroid das Spielfeld verlassen hat
                 if (asteroid.x + asteroid.width < 0) {
                     // Asteroid hat das Spielfeld verlassen, daher entfernen
