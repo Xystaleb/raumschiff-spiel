@@ -15,6 +15,19 @@ export default class LeaderboardService {
   
       return response.json();
     }
+
+    async getMultiplayerLeaderboard() {
+      const response = await fetch(
+        this.config.url + "/leaderboard/multiplayer",
+        {
+          method: "GET",
+          mode: "cors", // no-cors, *cors, same-origin
+          credentials: "same-origin"
+        }
+      );
+  
+      return response.json();
+    }
   
     async createLeaderboardEntry(username, score) {
       const response = await fetch(

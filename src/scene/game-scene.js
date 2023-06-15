@@ -176,7 +176,8 @@ export default class GameScene extends Scene {
         }
 
         if(this.sceneState.stage === 5) {
-            this.endGame();
+            await this.endGame();
+            return;
         }
 
         this.sceneState.currentStage = await getStage(this.sceneState.stage + 1);
@@ -473,7 +474,7 @@ export default class GameScene extends Scene {
         }
     }
 
-    endGame() {
+    async endGame() {
         this.sceneState.gameOver = !this.sceneState.gameOver
         const playerOne = this.playerOneShip;
         let playerTwo;
@@ -488,7 +489,7 @@ export default class GameScene extends Scene {
         }
 
         var endGame = new EndGameScene(this.view, playerOne, playerTwo, this.singlePlayer); // Übergabe ob single oder multiplayer
-        endGame.build();
+        await endGame.build();
         endGame.draw();
     }
 }
