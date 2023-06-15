@@ -30,6 +30,7 @@ export default class Scene {
         }
      }
 
+     
     draw(){
         setTimeout(requestAnimationFrame(this.loop.bind(this)),1000);
     }
