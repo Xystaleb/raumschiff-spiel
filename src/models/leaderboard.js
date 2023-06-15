@@ -17,7 +17,7 @@ export default class Leaderboard {
     }
 
     /**
-     * The function builds a leaderboard table with columns for name, score, and date.
+     * This function builds a leaderboard table with columns and rows based on provided entries.
      */
     build(){
         const leaderboard = document.createElement("div")

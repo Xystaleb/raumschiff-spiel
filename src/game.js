@@ -1,8 +1,7 @@
 import MenuScene from "./scene/menu-scene.js";
 
-  const CAMERA = document.getElementById('camera');
+const CAMERA = document.getElementById('camera');
 function setCameraSize() {
-
   const width = window.innerWidth;
   const height = window.innerHeight;
   CAMERA.style.width = width + 'px';
@@ -13,7 +12,7 @@ function setCameraSize() {
 window.addEventListener('DOMContentLoaded', setCameraSize);
 window.addEventListener('resize', setCameraSize);
 
-function startScreen(){
+function startScreen() {
   var menuScene = new MenuScene(CAMERA);
   menuScene.build();
   menuScene.draw();

@@ -5,8 +5,8 @@ export default class Ship extends GameObject {
     super(x, y, sidelength, sidelength)
     this.projectiles = [];
     this.canShoot = true;
-    this.highscore = 0;
-    this.name = name
+    this.score = 0;
+    this.name = name;
   }
 
   build1(){
