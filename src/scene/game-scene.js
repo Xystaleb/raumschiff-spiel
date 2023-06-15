@@ -159,7 +159,7 @@ export default class GameScene extends Scene {
             await this.nextLevel();
         // Spiel-Loop wiederholen
         if (!this.sceneState.gameOver)
-           setTimeout(() => {requestAnimationFrame(this.loop.bind(this))},1000/60) ;
+           setTimeout(() => {requestAnimationFrame(this.loop.bind(this))},1000/120) ;
     }
 
     checkEvents() {
