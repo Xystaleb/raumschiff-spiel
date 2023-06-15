@@ -1,80 +1,98 @@
-import Scene from './scene.js'
-import GameScene from './game-scene.js'
+import Scene from './scene.js';
+import GameScene from './game-scene.js';
 
-export default class MenuScene extends Scene {
-  build () {
-    super.build()
+class MenuScene extends Scene {
+  build() {
+    super.build();
 
-    const buttonSingleplayer = document.createElement('button')
-    buttonSingleplayer.innerText = 'Klick mich für Singleplayer'
+    const buttonSingleplayer = document.createElement('button');
+    buttonSingleplayer.innerText = 'Singleplayer';
 
-    const buttonMultiplayer = document.createElement('button')
-    buttonMultiplayer.innerText = 'Klick mich für Multiplayer'
+    const buttonMultiplayer = document.createElement('button');
+    buttonMultiplayer.innerText = 'Multiplayer';
 
     buttonSingleplayer.addEventListener('click', () => {
-      this.showNameInput(true)
-    })
+      this.showNameInput(true);
+    });
 
     buttonMultiplayer.addEventListener('click', () => {
-      this.showNameInput(false)
-    })
+      this.showNameInput(false);
+    });
 
-    const buttonDiv = document.createElement('div')
-    buttonDiv.classList.add('buttons')
-    buttonDiv.appendChild(buttonSingleplayer)
-    buttonDiv.appendChild(buttonMultiplayer)
+    const buttonDiv = document.createElement('div');
+    buttonDiv.classList.add('buttons');
+    buttonDiv.appendChild(buttonSingleplayer);
 
-    this.view.appendChild(buttonDiv)
+
+    const controlDiv = document.createElement('div');
+    controlDiv.classList.add('controlDiv');
+
+    const player1Controls = document.createElement('p');
+    player1Controls.innerText = 'Steuerung Spieler 1:\nW = Hoch\nA = Links\nD = Rechts\nS = Runter\nLeertaste = Schuss';
+
+    buttonDiv.appendChild(buttonMultiplayer);
+
+    const player2Controls = document.createElement('p');
+    player2Controls.innerText = 'Steuerung Spieler 2:\nPfeil hoch = Hoch\nPfeil links = Links\nPfeil rechts = Rechts\nPfeil runter = Runter\nEnter = Schuss';
+
+    buttonDiv.appendChild(player1Controls);
+    buttonDiv.appendChild(player2Controls);
+
+    this.view.appendChild(buttonDiv);
   }
 
-  showNameInput (singlePlayer) {
-    this.view.innerHTML = '' // Leert den Inhalt der Szene
 
-    const nameLabel = document.createElement('label')
-    nameLabel.innerText = 'Name des Spielers:'
-    const nameInput = document.createElement('input')
 
-    const submitButton = document.createElement('button')
-    submitButton.innerText = 'Bestätigen'
+  showNameInput(singlePlayer) {
+    this.view.innerHTML = '';
+
+    const nameLabel = document.createElement('label');
+    nameLabel.innerText = 'Name des ersten Spielers:';
+    const nameInput = document.createElement('input');
+
+    const submitButton = document.createElement('button');
+    submitButton.innerText = 'Bestätigen';
     submitButton.addEventListener('click', () => {
-      const playerName = nameInput.value || 'Spieler' // Standardname, falls kein Name eingegeben wurde
-      this.startPlaying(singlePlayer, playerName, '')
-    })
+      const playerName = nameInput.value || 'Spieler';
+      this.startPlaying(singlePlayer, playerName, '');
+    });
 
-    const nameInputContainer = document.createElement('div')
-    nameInputContainer.classList.add('PlayerOneInput')
-    nameInputContainer.appendChild(nameLabel)
-    nameInputContainer.appendChild(nameInput)
-    nameInputContainer.appendChild(submitButton)
+    const nameInputContainer = document.createElement('div');
+    nameInputContainer.classList.add('PlayerOneInput');
+    nameInputContainer.appendChild(nameLabel);
+    nameInputContainer.appendChild(nameInput);
+    nameInputContainer.appendChild(submitButton);
 
-    this.view.appendChild(nameInputContainer)
+    this.view.appendChild(nameInputContainer);
 
     if (!singlePlayer) {
-      const secondNameLabel = document.createElement('label')
-      secondNameLabel.innerText = 'Name des zweiten Spielers:'
-      const secondNameInput = document.createElement('input')
+      const secondNameLabel = document.createElement('label');
+      secondNameLabel.innerText = 'Name des zweiten Spielers:';
+      const secondNameInput = document.createElement('input');
 
-      const secondSubmitButton = document.createElement('button')
-      secondSubmitButton.innerText = 'Bestätigen'
+      const secondSubmitButton = document.createElement('button');
+      secondSubmitButton.innerText = 'Bestätigen';
       secondSubmitButton.addEventListener('click', () => {
-        const playerName1 = nameInput.value || 'Spieler 1'
-        const playerName2 = secondNameInput.value || 'Spieler 2'
-        this.startPlaying(singlePlayer, playerName1, playerName2)
-      })
+        const playerName1 = nameInput.value || 'Spieler 1';
+        const playerName2 = secondNameInput.value || 'Spieler 2';
+        this.startPlaying(singlePlayer, playerName1, playerName2);
+      });
 
-      const secondNameInputContainer = document.createElement('div')
-      secondNameInputContainer.classList.add('PlayerTwoInput')
-      secondNameInputContainer.appendChild(secondNameLabel)
-      secondNameInputContainer.appendChild(secondNameInput)
-      secondNameInputContainer.appendChild(secondSubmitButton)
+      const secondNameInputContainer = document.createElement('div');
+      secondNameInputContainer.classList.add('PlayerTwoInput');
+      secondNameInputContainer.appendChild(secondNameLabel);
+      secondNameInputContainer.appendChild(secondNameInput);
+      secondNameInputContainer.appendChild(secondSubmitButton);
 
-      this.view.appendChild(secondNameInputContainer)
+      this.view.appendChild(secondNameInputContainer);
     }
   }
 
-  startPlaying (singlePlayer, name1, name2) {
-    const gameScene = new GameScene(this.view, singlePlayer, name1, name2)
-    gameScene.build()
-    gameScene.draw()
+  startPlaying(singlePlayer, name1, name2) {
+    const gameScene = new GameScene(this.view, singlePlayer, name1, name2);
+    gameScene.build();
+    gameScene.draw();
   }
 }
+
+export default MenuScene;
