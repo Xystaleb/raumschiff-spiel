@@ -10,11 +10,16 @@
             {"x":29,"y":11,"width":6,"height":2},
 
             {"x":39,"y":14,"width":14,"height":2},{"x":41,"y":12,"width":10,"height":2}, 
-            {"x":43,"y":10,"width":6,"height":2}, {"x":45,"y":8,"width":2,"height":2}
+            {"x":43,"y":10,"width":6,"height":2}, {"x":45,"y":8,"width":2,"height":2},
+
+            {"x":110,"y":0,"width":14,"height":7},{"x":110,"y":9,"width":14,"height":8}
+
        ],
 
-         "asteroidSpawners":[
-        {"x":50,"type":"spawner"},{"x":55,"type":"spawner"},{"x":60,"type":"spawner"}],
+
+
+         "asteroidSpawner":[
+        {"x":40,"type":"spawner"},{"x":45,"type":"spawner"},{"x":50,"type":"spawner"}],
     
         "finish": 110
     

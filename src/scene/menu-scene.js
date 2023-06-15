@@ -2,6 +2,8 @@ import Scene from "./scene.js";
 import GameScene from "./game-scene.js";
 
 export default class MenuScene extends Scene {
+
+    //Erzeugen der HTMLElemente
     build() {
 
         super.build();
@@ -22,7 +24,6 @@ export default class MenuScene extends Scene {
 
         this.view.appendChild(buttonSingleplayer);
         this.view.appendChild(buttonMultiplayer);
-
     }
 
     startPlaying(boolean) {

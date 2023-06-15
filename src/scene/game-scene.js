@@ -4,6 +4,7 @@ import Wall from "../models/wall.js";
 import Scene from "./scene.js";
 import Projectile from "../models/projectile.js";
 import { getStage } from "../level-helper.js";
+import EndGameScene from "./end-game-scene.js";
 
 export default class GameScene extends Scene {
     constructor(view, boolean) {
@@ -53,7 +54,7 @@ export default class GameScene extends Scene {
             8 * BLOCK_HEIGHT,
             this.ratio
         );
-        this.playerOneShip.build();
+        this.playerOneShip.build1();
         this.gameObjects.push(this.playerOneShip);
 
         if (!this.singlePlayer) {
@@ -63,23 +64,22 @@ export default class GameScene extends Scene {
                 this.ratio
             );
 
-            this.playerTwoShip.build();
+            this.playerTwoShip.build2();
             this.gameObjects.push(this.playerTwoShip);
         }
-
-
-
 
         await this.initStage();
         super.build();
     }
 
+    // 1 level laden
     async initStage() {
         this.sceneState.stage = 0;
         this.sceneState.currentStage = await getStage(1);
         await this.initializeStage();
     }
 
+    // Level erzeugen
     async initializeStage() {
         const BLOCK_WIDTH = 50;
 
@@ -113,34 +113,45 @@ export default class GameScene extends Scene {
         this.sceneState.stage += 1;
     }
 
-
     // game loop
     async loop() {
         // Raumschiff bewegen
         this.moveSpaceship();
-        this.checkBoundaries();
+        // Boundaries, damit die Schiffe nicht aus dem spielfeld fliegen (zweiter aufruf falls es einen zweiten spieler gibt)
+        this.checkBoundaries(this.playerOneShip);
+        if(!this.singlePlayer){
+            this.checkBoundaries(this.playerTwoShip); 
+        }
+        // Wände/Level bewegen
         this.moveWall();
+        // Asteroiden bewegen
         this.moveAsteroids();
+        // Eventmarker bewegen
         this.moveEvents();
+        // entfernen von Projektilen (zweiter aufruf falls es einen zweiten spieler gibt)
         this.updateProjectiles(this.playerOneShip);
         if (!this.singlePlayer) {
             this.updateProjectiles(this.playerTwoShip);
         }
+        // Überprüfen von Projektilkollision (zweiter aufruf falls es einen zweiten spieler gibt)
         this.checkProjectileCollision(this.playerOneShip);
         if (!this.singlePlayer) {
             this.checkProjectileCollision(this.playerTwoShip);
         }
+        //next level Marker bewegen
         this.moveFinish();
-
-        // Gegner bewegen
-        // Kollisionsprüfung
-        this.checkCollisions();
+        // Überprüfen von gegnerKollision mit dem Schiff (zweiter aufruf falls es einen zweiten spieler gibt)
+        this.checkCollisions(this.playerOneShip);
+        if (!this.singlePlayer) {
+            this.checkCollisions(this.playerTwoShip);
+        }
+        // events auslösen (zur Zeit nur Asteroiden Spawner)
         this.checkEvents();
-
+        //nächstes Level laden
         if (this.finish <= 0)
             await this.nextLevel();
         // Spiel-Loop wiederholen
-        if (!this.gameOver)
+        if (!this.sceneState.gameOver)
             requestAnimationFrame(this.loop.bind(this));
     }
 
@@ -160,9 +171,16 @@ export default class GameScene extends Scene {
 
     async nextLevel() {
         this.playerOneShip.x = 0
-        this.sceneState.currentStage = await getStage(this.sceneState.stage + 1);
-        await this.initializeStage();
+        if (!this.singlePlayer) {
+            this.playerTwoShip.x = 0
+        }
 
+        if(this.sceneState.stage === 5) {
+            this.endGame();
+        }
+
+        this.sceneState.currentStage = await getStage(this.sceneState.stage + 1);
+        await this.initializeStage()
     }
 
     createWall(x, y, width, height) {
@@ -193,7 +211,7 @@ export default class GameScene extends Scene {
 
     createRandomAsteroid() {
         const asteroidSize = Math.floor(Math.random() * 30) + 30;
-        const asteroidSpeed = Math.random();
+        const asteroidSpeed = Math.random()*3;
 
         const asteroidX = this.view.offsetWidth;
         const asteroidY = Math.floor(Math.random() * (this.view.offsetHeight - asteroidSize));
@@ -201,7 +219,6 @@ export default class GameScene extends Scene {
         let asteroid = new Asteroid(
             asteroidX,
             asteroidY,
-            asteroidSize,
             asteroidSize,
             asteroidSpeed
         )
@@ -227,13 +244,13 @@ export default class GameScene extends Scene {
         // Verzögerung für den nächsten Schuss
         setTimeout(() => {
             player.canShoot = true;
-        }, 300); // 500 Millisekunden Verzögerung
+        }, 300); // 300 Millisekunden Verzögerung
     }
 
     updateProjectiles(player) {
         const projectilesToDelete = []
 
-        // check player one projectiles
+        // überprüfen der player projectiles
         player.projectiles.forEach((projectile, idx) => {
             if (projectile.x <= this.view.offsetWidth) {
                 projectile.x += 5;
@@ -250,6 +267,7 @@ export default class GameScene extends Scene {
         }
     }
 
+    // Eventmarker bewegen
     moveEvents() {
         for (var i = 0; i < this.events.length; i++) {
             const event = this.events[i];
@@ -258,10 +276,12 @@ export default class GameScene extends Scene {
         }
     }
 
+    //next level Marker bewegen
     moveFinish() {
         this.finish -= 2
     }
 
+    // Wände bewegen
     moveWall() {
         const wallsToDelete = []
         this.gameObjects.forEach((gameObject, idx) => {
@@ -270,21 +290,20 @@ export default class GameScene extends Scene {
                 wall.x -= 2;
 
                 if (wall.x + wall.width < 0) {
-                    // Asteroid hat das Spielfeld verlassen, daher entfernen
+                    // Wand hat das Spielfeld verlassen, daher entfernen
                     wallsToDelete.push(idx)
 
                 } else {
-                    // Aktualisiere die Position des Asteroiden im DOM
+                    // Aktualisiere die Position der Wand im DOM
                     wall.update();
                 }
             }
-
-
         });
+
         for (const idx of wallsToDelete) {
             this.gameObjects[idx].element.remove();
             this.gameObjects.splice(idx, 1)
-            break;
+            break; //das löschen, des objektes aus dem array beeinflusst das array, so dass es bei erneutem ausführen zu fehlern führt. daher ein break. beim nächsten loop wird dann das nächste Element gelöscht.
         }
     }
 
@@ -320,17 +339,16 @@ export default class GameScene extends Scene {
     }
 
     // Funktion zur Kollisionsprüfung
-    checkCollisions() {
+    checkCollisions(player) {
         for (var i = 0; i < this.gameObjects.length; i++) {
             var current = this.gameObjects[i];
             if (current instanceof Wall || current instanceof Asteroid) {
                 var elementRect = current.element.getBoundingClientRect();
-                if (this.playerOneShip.intersect(elementRect)) {
+                if (player.intersect(elementRect)) {
                     // Kollision zwischen Raumschiff und Gegner
                     console.log("boom")
-                    console.log(this.playerOneShip.x, this.playerOneShip.y, elementRect.x, elementRect.y)
-                    endGame();
-                    return;
+                    console.log(player.x, player.y, elementRect.x, elementRect.y)
+                    this.endGame();
                 }
             }
         }
@@ -349,6 +367,8 @@ export default class GameScene extends Scene {
                     if (gameObject.intersect(projectileRect)) {
                         projectilesToDelete.push(projectileIdx);
                         asteroidsToDelete.push(asteroidIdx);
+                        player.highscore += 1;
+                        console.log(player.highscore)
                         return;
                     }
                 }
@@ -377,30 +397,32 @@ export default class GameScene extends Scene {
         }
     }
 
-
-
-
-    checkBoundaries() {
+    // Boundaries, damit die Schiffe nicht aus dem spielfeld fliegen
+    checkBoundaries(ship) {
         const bounding_box = this.view.getBoundingClientRect();
-        const spaceship = this.playerOneShip;
 
+        //prüfen ob das schiff links herrausfliegt
         if (this.playerOneShip.x <= 0) {
             this.playerOneShip.x = 0
         }
 
-        if (spaceship.x >= bounding_box.width - spaceship.width) {
-            spaceship.x = bounding_box.width - spaceship.width;
+        //prüfen ob das schiff rechts herrausfliegt
+        if (ship.x >= bounding_box.width - ship.width) {
+            ship.x = bounding_box.width - ship.width;
         }
 
-        if (spaceship.y <= 0) {
-            spaceship.y = 0
+        //prüfen ob das schiff oben herrausfliegt
+        if (ship.y <= 0) {
+            ship.y = 0
         }
 
-        if (spaceship.y >= bounding_box.height - spaceship.height) {
-            spaceship.y = bounding_box.height - spaceship.height;
+        //prüfen ob das schiff unten herrausfliegt
+        if (ship.y >= bounding_box.height - ship.height) {
+            ship.y = bounding_box.height - ship.height;
         }
     }
 
+    // Raumschiff bewegen
     moveSpaceship() {
         const spaceshipSpeed = 5;
 
@@ -414,18 +436,17 @@ export default class GameScene extends Scene {
         }
 
         if (this.keys['a']) {
-            // Bewegungslogik für nach oben
+            // Bewegungslogik für nach links
             this.playerOneShip.x -= spaceshipSpeed;
         }
         if (this.keys['d']) {
-            // Bewegungslogik für nach unten
+            // Bewegungslogik für nach rechts
             this.playerOneShip.x += spaceshipSpeed;
         }
         if (this.keys[' '] && this.playerOneShip.canShoot) {
             // Schießen eines Projektils
             this.createProjectile(this.playerOneShip);
         }
-
         this.playerOneShip.update();
 
         if (!this.singlePlayer) {
@@ -439,11 +460,11 @@ export default class GameScene extends Scene {
             }
 
             if (this.keys['ArrowLeft']) {
-                // Bewegungslogik für nach oben
+                // Bewegungslogik für nach links
                 this.playerTwoShip.x -= spaceshipSpeed;
             }
             if (this.keys['ArrowRight']) {
-                // Bewegungslogik für nach unten
+                // Bewegungslogik für nach rechts
                 this.playerTwoShip.x += spaceshipSpeed;
             }
             if (this.keys['Enter'] && this.playerTwoShip.canShoot) {
@@ -452,17 +473,24 @@ export default class GameScene extends Scene {
             }
             this.playerTwoShip.update();
         }
-
-
-
     }
 
+    endGame() {
+        this.sceneState.gameOver = !this.sceneState.gameOver
+        const playerOne = this.playerOneShip;
+        let playerTwo;
+        if (this.singlePlayer) {
+            playerTwo = new Ship(
+                50,
+                8 * 50,
+                this.ratio
+            )
+        } else {
+            playerTwo = this.playerTwoShip
+        }
 
-
-
-    async endGame() {
-        // score in den local storage schreiben
-        // und spaeter in der endGameScene wiederholen
-        // und anzeigen
+        var endGame = new EndGameScene(this.view, playerOne, playerTwo, this.singlePlayer); // Übergabe ob single oder multiplayer
+        endGame.build();
+        endGame.draw();
     }
 }

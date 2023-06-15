@@ -7,11 +7,19 @@ export default class Ship extends GameObject {
     super(x, y, width*ratio, height*ratio)
     this.projectiles = [];
     this.canShoot = true;
+    this.highscore = 0;
   }
 
-  build(){
+  build1(){
     this.element = document.createElement("div");
-    this.element.className = 'spaceship';
+    this.element.className = 'spaceship1';
     super.build();
   }
+
+  build2(){
+    this.element = document.createElement("div");
+    this.element.className = 'spaceship2';
+    super.build();
+  }
+
 }

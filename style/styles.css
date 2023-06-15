@@ -15,9 +15,14 @@ body {
   margin: 0;
 }
 
-.spaceship {
+.spaceship1 {
   position: absolute;
   background-color: greenyellow;
+}
+
+.spaceship2 {
+  position: absolute;
+  background-color: red;
 }
 
 .score {
