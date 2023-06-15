@@ -356,7 +356,7 @@ export default class GameScene extends Scene {
           if (gameObject.intersect(projectileRect)) {
             projectilesToDelete.push(projectileIdx)
             asteroidsToDelete.push(asteroidIdx)
-            player.highscore += 1
+            player.score += 37
             return
           }
         }
