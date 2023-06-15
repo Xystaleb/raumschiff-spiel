@@ -42,14 +42,14 @@ export default class EndGameScene extends Scene {
       scoreElement.innerHTML = 'Game Over! Dein Score: ' + this.playerOne.score
 
       // insert score
-      await leaderboardService.createLeaderboardEntry('test1', 10000)
+      await leaderboardService.createLeaderboardEntry(this.playerOne.name, this.playerOne.score)
     } else {
       var scoreElement = document.createElement('div')
       scoreElement.className = 'score'
       scoreElement.innerHTML = 'Game Over! <br>Player One Score: ' + this.playerOne.score + '<br>Player Two Score: ' + this.playerTwo.score
 
       // insert score
-      await leaderboardService.createLeaderboardEntry('test2', (this.playerTwo.score + 1) * 10000)
+      await leaderboardService.createLeaderboardEntry(this.playerTwo.name, this.playerTwo.score)
     }
 
     const reloadButton = document.createElement('button')
