@@ -44,7 +44,7 @@ export default class LeaderboardService {
    */
   async createLeaderboardEntry (username, score) {
     await fetch(
-      this.config.url + '/leaderboard/createentry',
+      this.config.url + '/leaderboard',
       {
         method: 'POST',
         mode: 'cors', // no-cors, *cors, same-origin
@@ -52,7 +52,22 @@ export default class LeaderboardService {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ username, score })
+        body: JSON.stringify({ "name" : username, "score": score })
+      }
+    )
+  }
+
+  async createMultiplayerLeaderboardEntry (teamName, score) {
+    await fetch(
+      this.config.url + '/leaderboard/multiplayer',
+      {
+        method: 'POST',
+        mode: 'cors', // no-cors, *cors, same-origin
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ "name" : teamName, "score": score })
       }
     )
   }
