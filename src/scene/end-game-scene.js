@@ -3,52 +3,35 @@ import LeaderboardService from '../services/leaderboard-service.js'
 import Scene from './scene.js'
 
 export default class EndGameScene extends Scene {
-  /**
-     * This is a constructor function that initializes the view, playerOne, playerTwo, and singleplayer
-     * boolean for a game.
-     * @param view - It is a reference to the view object that will be used to display the game interface.
-     * @param playerOne - It is a variable that represents the first player in the game.
-     * @param playerTwo - `playerTwo` is a parameter that represents the second player in the game. It is
-     * likely an object that contains information about the player, such as their name, score, and game
-     * pieces.
-     * @param boolean - The `boolean` parameter is a variable that can hold a value of either `true` or
-     * `false`. It is used to determine whether the game is a singleplayer game or a multiplayer game. If
-     * the value is `true`, it means the game is a singleplayer game, and if the
-     */
-  constructor (view, playerOne, playerTwo, boolean) {
+  constructor(view, playerOne, playerTwo, singleplayer) {
     super(view)
     this.playerOne = playerOne
     this.playerTwo = playerTwo
-    this.singleplayer = boolean
+    this.singleplayer = singleplayer
   }
 
-  /**
-     * The function builds the end game screen, displays the highscore, creates a leaderboard entry, and
-     * allows the player to start a new game.
-     */
-  async build () {
-    // Stoppe das Spiel, z.B. indem du den gameLoop beendest oder den Interval für die Gegnererzeugung stoppst
-    // Zeige den Highscore an
+  // Erstellt den Endbildschirm des Spiels, zeigt den Highscore an, erstellt einen Eintrag in der Rangliste
+  // und ermöglicht es dem Spieler, ein neues Spiel zu starten.
+  async build() {
+  // Stoppe das Spiel, z.B. indem du den gameLoop beendest oder den Interval für die Generierung von Gegnern stoppst
+  // Zeige den Highscore an
 
-    const leaderboardService = new LeaderboardService(
-      {
-        url: 'http://45.133.9.157:3000'
-      }
-    )
+    const leaderboardService = new LeaderboardService({
+      url: 'http://45.133.9.157:3000'
+    })
+
+    let scoreElement = document.createElement('div')
+    scoreElement.className = 'score'
 
     if (this.singleplayer) {
-      var scoreElement = document.createElement('div')
-      scoreElement.className = 'score'
-      scoreElement.innerHTML = 'Game Over! Dein Score: ' + this.playerOne.score
+      scoreElement.innerHTML = `Game Over! Dein Score: ${this.playerOne.score}`
 
-      // insert score
+      // Insert score
       await leaderboardService.createLeaderboardEntry(this.playerOne.name, this.playerOne.score)
     } else {
-      var scoreElement = document.createElement('div')
-      scoreElement.className = 'score'
-      scoreElement.innerHTML = 'Game Over! <br>Player One Score: ' + this.playerOne.score + '<br>Player Two Score: ' + this.playerTwo.score
+      scoreElement.innerHTML = `Game Over! <br>Player One Score: ${this.playerOne.score}<br>Player Two Score: ${this.playerTwo.score}`
 
-      // insert score
+      // Insert score
       await leaderboardService.createMultiplayerLeaderboardEntry(this.playerOne.name, this.playerOne.score + this.playerTwo.score)
     }
 
@@ -62,7 +45,7 @@ export default class EndGameScene extends Scene {
     this.components.push(scoreElement)
 
     let entries = [];
-    if(this.singleplayer){
+    if (this.singleplayer) {
       entries = await leaderboardService.getLeaderboard()
     } else {
       entries = await leaderboardService.getMultiplayerLeaderboard()

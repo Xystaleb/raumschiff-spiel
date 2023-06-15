@@ -1,12 +1,5 @@
 export default class Leaderboard {
-  /**
-     * This is a constructor function that initializes properties for an object representing a table with
-     * columns for name, score, and date.
-     * @param entries - The `entries` parameter is an array that contains the data for the table. Each
-     * element in the array represents a row in the table and should contain values for the columns
-     * specified in the `columns` array.
-     */
-  constructor (entries) {
+  constructor(entries) {
     this.element = undefined
     this.entries = entries
     this.columns = [
@@ -16,15 +9,13 @@ export default class Leaderboard {
     ]
   }
 
-  /**
-     * This function builds a leaderboard table with columns and rows based on provided entries.
-     */
-  build () {
+  // Erstellt eine Rangliste-Tabelle mit Spalten und Zeilen basierend auf den übergebenen Einträgen.
+  build() {
     const leaderboard = document.createElement('div')
     leaderboard.className = 'leaderboard'
     const table = document.createElement('table')
 
-    // generate columns
+    // Spalten generieren
     const col_row = document.createElement('tr')
     for (const col of this.columns) {
       const th = document.createElement('th')
@@ -33,7 +24,7 @@ export default class Leaderboard {
     }
     table.appendChild(col_row)
 
-    // generate rows based on this.entries
+    // Zeilen generieren basierend auf den Einträgen in this.entries
     for (const entry of this.entries) {
       const row = document.createElement('tr')
 

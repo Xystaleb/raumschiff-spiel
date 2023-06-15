@@ -22,10 +22,6 @@ export default class GameScene extends Scene {
     }
   }
 
-  getSceneState () {
-    return this.sceneState
-  }
-
   draw () {
     super.draw()
   }
@@ -38,6 +34,7 @@ export default class GameScene extends Scene {
     this.keys[event.key] = false
   }
 
+  // Initialisiert das Spiel und registriert Event-Handler
   async build () {
     // reset gameObjects and components
     this.components = []
@@ -111,7 +108,8 @@ export default class GameScene extends Scene {
     this.sceneState.stage += 1
   }
 
-  // game loop
+  // Hauptschleife des Spiels, enthält die Spiellogik und Bewegungsaktualisierungen
+
   async loop () {
     // Raumschiff bewegen
     this.moveSpaceship()
@@ -165,7 +163,7 @@ export default class GameScene extends Scene {
       }
     }
   }
-
+  // Lädt das nächste Level des Spiels
   async nextLevel () {
     this.playerOneShip.x = 0
     if (!this.singlePlayer) {
@@ -181,6 +179,7 @@ export default class GameScene extends Scene {
     await this.initializeStage()
   }
 
+  // Erstellt eine Wand im Spiel
   createWall (x, y, width, height) {
     const wall = new Wall(
       x * this.BLOCK_WIDTH,
@@ -192,6 +191,7 @@ export default class GameScene extends Scene {
     this.registerGameObject(wall)
   }
 
+  // Erstellt einen Asteroiden im Spiel
   createAsteroid (x, y, size, speed) {
     const asteroid = new Asteroid(
       x * this.BLOCK_WIDTH,
@@ -203,6 +203,7 @@ export default class GameScene extends Scene {
     this.registerGameObject(asteroid)
   }
 
+  // Erzeugt einen zufällig positionierten Asteroiden mit zufälliger Größe und Geschwindigkeit
   createRandomAsteroid () {
     const asteroidSize = Math.floor(Math.random() * 30) + 30
     const asteroidSpeed = Math.random() * 3
@@ -219,7 +220,7 @@ export default class GameScene extends Scene {
     asteroid.build()
     this.registerGameObject(asteroid)
   }
-
+  // Erzeugt ein Projektil für den Spieler, wenn der Spieler schießen kann
   createProjectile (player) {
     if (player.canShoot == false) { return }
 
@@ -240,6 +241,7 @@ export default class GameScene extends Scene {
     }, 300) // 300 Millisekunden Verzögerung
   }
 
+  // Aktualisiert die Position der Projektile des Spielers und entfernt Projektil-Objekte, die das Spielfeld verlassen haben
   updateProjectiles (player) {
     const projectilesToDelete = []
 
@@ -260,7 +262,7 @@ export default class GameScene extends Scene {
     }
   }
 
-  // Eventmarker bewegen
+  // Bewegt die Eventmarker nach links
   moveEvents () {
     for (let i = 0; i < this.events.length; i++) {
       const event = this.events[i]
@@ -299,6 +301,7 @@ export default class GameScene extends Scene {
     }
   }
 
+  // Bewegt die Asteroiden nach links und entfernt Asteroiden, die das Spielfeld verlassen haben
   moveAsteroids () {
     const asteroidsToDelete = []
     this.gameObjects.forEach((gameObject, idx) => {
@@ -323,6 +326,7 @@ export default class GameScene extends Scene {
     }
   }
 
+  // Startet den periodischen Spawn von zufälligen Asteroiden
   startAsteroidSpawner () {
     this.asteroidSpawner = setInterval(() => {
       this.createRandomAsteroid()
@@ -462,6 +466,7 @@ export default class GameScene extends Scene {
     }
   }
 
+  // Beendet das Spiel und startet die EndGameScene
   async endGame () {
     this.sceneState.gameOver = !this.sceneState.gameOver
     const playerOne = this.playerOneShip

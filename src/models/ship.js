@@ -1,7 +1,7 @@
 import GameObject from './game-object.js'
 
 export default class Ship extends GameObject {
-  constructor (x, y, sidelength, name) {
+  constructor(x, y, sidelength, name) {
     super(x, y, sidelength * 2, sidelength)
     this.projectiles = []
     this.canShoot = true
@@ -9,13 +9,15 @@ export default class Ship extends GameObject {
     this.name = name
   }
 
-  build1 () {
+  // Erstellt das DOM-Element für das Raumschiff 1
+  build1() {
     this.element = document.createElement('div')
     this.element.className = 'spaceship1'
     super.build()
   }
 
-  build2 () {
+  // Erstellt das DOM-Element für das Raumschiff 2
+  build2() {
     this.element = document.createElement('div')
     this.element.className = 'spaceship2'
     super.build()
