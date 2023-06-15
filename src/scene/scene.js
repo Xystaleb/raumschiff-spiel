@@ -1,5 +1,5 @@
 export default class Scene {
-    constructor(view){
+    constructor(view, config){
         this.width = view.width;
         this.height = view.height;
 
@@ -11,6 +11,7 @@ export default class Scene {
         this.components = [];
         this.projectiles = [];
         this.sceneState = {};
+        this.config = config;
     }
 
     build(){

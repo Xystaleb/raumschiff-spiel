@@ -11,6 +11,9 @@ export default class GameScene extends Scene {
         super(view);
         this.BLOCK_WIDTH=view.offsetHeight/16
         this.singlePlayer = boolean; // boolean zum übergeben ob multiplayer, oder singleplayer
+        this.name1 = name1;
+        this.name2 = name2;
+        this.ratio = view.offsetWidth / view.offsetHeight;
         this.sceneState = {
             stage: 1,
             currentStage: undefined,
@@ -36,6 +39,7 @@ export default class GameScene extends Scene {
     }
 
     async build() {
+
         // reset gameObjects and components
         this.components = [];
         this.gameObjects = [];
@@ -67,7 +71,8 @@ export default class GameScene extends Scene {
             this.playerTwoShip.build2();
             this.gameObjects.push(this.playerTwoShip);
         }
-
+        console.log(this.playerOneShip.name)
+        console.log(this.name)
         await this.initStage();
         super.build();
     }
@@ -114,6 +119,8 @@ export default class GameScene extends Scene {
 
     // game loop
     async loop() {
+
+
         // Raumschiff bewegen
         this.moveSpaceship();
         // Boundaries, damit die Schiffe nicht aus dem spielfeld fliegen (zweiter aufruf falls es einen zweiten spieler gibt)
@@ -137,7 +144,7 @@ export default class GameScene extends Scene {
         if (!this.singlePlayer) {
             this.checkProjectileCollision(this.playerTwoShip);
         }
-        
+
         //next level Marker bewegen
         this.moveFinish();
         // Überprüfen von gegnerKollision mit dem Schiff (zweiter aufruf falls es einen zweiten spieler gibt)

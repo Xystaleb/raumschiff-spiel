@@ -51,21 +51,6 @@ tbody:nth-child(odd) td{
   z-index: 3;
 }
 
-
-/* Beispiel-Stile für die Gegner */
-.enemy {
-  position: absolute;
-  top: 50%;
-  /* Vertikal zentriert */
-  left: 100%;
-  /* Startposition außerhalb des Bildschirms */
-  transform: translateY(-50%);
-  /* Korrigiert die Vertikalpositionierung */
-  width: 30px;
-  height: 30px;
-  background-color: #ff0000;
-}
-
 .wall {
   position: absolute;
   /* Vertikal zentriert */
