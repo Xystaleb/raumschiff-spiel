@@ -108,8 +108,8 @@ p {
   background-color: #39c51f;
   color: white;
   border: none;
-  height: 10%;
-  width: 15%;
+  height: fit-content;
+  width: fit-content;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -159,4 +159,40 @@ button:hover {
 
 .projectile {
   background-color: orangered;
+}
+
+@media screen and (max-width: 768px) {
+  /* Styles für Bildschirme mit einer Breite von 768px oder weniger */
+  p {
+    padding: 3px 6px;
+    font-size: 14px;
+  }
+
+  .buttons button {
+    padding: 8px 16px;
+    font-size: 16px;
+  }
+
+  .nameInputContainer input {
+    padding: 6px;
+    font-size: 14px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  /* Styles für Bildschirme mit einer Breite von 480px oder weniger */
+  p {
+    padding: 2px 4px;
+    font-size: 12px;
+  }
+
+  .buttons button {
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+
+  .nameInputContainer input {
+    padding: 4px;
+    font-size: 12px;
+  }
 }
