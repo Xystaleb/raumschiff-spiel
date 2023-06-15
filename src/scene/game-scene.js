@@ -7,8 +7,9 @@ import { getStage } from "../level-helper.js";
 import EndGameScene from "./end-game-scene.js";
 
 export default class GameScene extends Scene {
-    constructor(view, boolean) {
+    constructor(view, boolean, name1, name2) {
         super(view);
+        this.BLOCK_WIDTH=view.offsetHeight/16
         this.singlePlayer = boolean; // boolean zum übergeben ob multiplayer, oder singleplayer
         this.ratio = view.offsetWidth / view.offsetHeight;
         this.sceneState = {
@@ -46,22 +47,22 @@ export default class GameScene extends Scene {
         document.addEventListener("keydown", this.handleKeyDown.bind(this));
         document.addEventListener("keyup", this.handleKeyUp.bind(this));
 
-        const BLOCK_WIDTH = 50;
-        const BLOCK_HEIGHT = 50;
 
         this.playerOneShip = new Ship(
-            BLOCK_WIDTH,
-            8 * BLOCK_HEIGHT,
-            this.ratio
+            this.BLOCK_WIDTH,
+            8 * this.BLOCK_WIDTH,
+            this.ratio,
+            this.name1
         );
         this.playerOneShip.build1();
         this.gameObjects.push(this.playerOneShip);
 
         if (!this.singlePlayer) {
             this.playerTwoShip = new Ship(
-                BLOCK_WIDTH,
-                8 * BLOCK_HEIGHT,
-                this.ratio
+                this.BLOCK_WIDTH,
+                8 * this.BLOCK_WIDTH,
+                this.ratio,
+                this.name2
             );
 
             this.playerTwoShip.build2();
@@ -81,10 +82,9 @@ export default class GameScene extends Scene {
 
     // Level erzeugen
     async initializeStage() {
-        const BLOCK_WIDTH = 50;
 
         const stage = this.sceneState.currentStage;
-        this.finish = stage.finish*BLOCK_WIDTH;
+        this.finish = stage.finish*this.BLOCK_WIDTH;
 
         for (const wall of stage.walls) {
             this.createWall(wall.x, wall.y, wall.width, wall.height);
@@ -98,14 +98,14 @@ export default class GameScene extends Scene {
 
         if (stage.randomSize !== undefined) {
             for (const rnd of stage.randomSize) {
-                let size = Math.random() * (BLOCK_WIDTH - 20) + 20
+                let size = Math.random() * (this.BLOCK_WIDTH - 20) + 20
                 this.createAsteroid(rnd.x, rnd.y, size, rnd.speed);
             }
         }
 
         if (stage.asteroidSpawner !== undefined) {
             for (const spawner of stage.asteroidSpawner) {
-                spawner.x *= BLOCK_WIDTH;
+                spawner.x *= this.BLOCK_WIDTH;
                 this.events.push(spawner);
             }
         }
@@ -184,24 +184,22 @@ export default class GameScene extends Scene {
     }
 
     createWall(x, y, width, height) {
-        const BLOCK_WIDTH = 50;
-        const BLOCK_HEIGHT = 50;
+
         var wall = new Wall(
-            x * BLOCK_WIDTH,
-            y * BLOCK_HEIGHT,
-            width * BLOCK_WIDTH,
-            height * BLOCK_HEIGHT
+            x * this.BLOCK_WIDTH,
+            y * this.BLOCK_WIDTH,
+            width * this.BLOCK_WIDTH,
+            height * this.BLOCK_WIDTH
         );
         wall.build();
         this.registerGameObject(wall);
     }
 
     createAsteroid(x, y, size, speed) {
-        const BLOCK_WIDTH = 50;
-        const BLOCK_HEIGHT = 50;
+
         let asteroid = new Asteroid(
-            x * BLOCK_WIDTH,
-            y * BLOCK_HEIGHT,
+            x * this.BLOCK_WIDTH,
+            y * this.BLOCK_WIDTH,
             size,
             speed
         )
