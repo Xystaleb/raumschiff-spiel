@@ -39,14 +39,14 @@ export default class EndGameScene extends Scene {
         if (this.singleplayer) {
             var scoreElement = document.createElement('div');
             scoreElement.className = 'score';
-            scoreElement.innerHTML = 'Game Over! Dein Score: ' + this.playerOne.highscore;
+            scoreElement.innerHTML = 'Game Over! Dein Score: ' + this.playerOne.score;
 
             // insert score
             await leaderboardService.createLeaderboardEntry("test1", 10000);
         } else {
             var scoreElement = document.createElement('div');
             scoreElement.className = 'score';
-            scoreElement.innerHTML = 'Game Over! <br>Player One Score: ' + this.playerOne.highscore + '<br>Player Two Score: ' + this.playerTwo.highscore;
+            scoreElement.innerHTML = 'Game Over! <br>Player One Score: ' + this.playerOne.score + '<br>Player Two Score: ' + this.playerTwo.score;
 
             // insert score
             await leaderboardService.createLeaderboardEntry("test2", (this.playerTwo.score + 1) * 10000);
