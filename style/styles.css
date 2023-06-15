@@ -68,10 +68,77 @@ tbody:nth-child(odd) td{
   75% { background-color: orange; }
   100% { background-color: yellow; }
 }
-/* Weitere Stile und Anpassungen für andere Elemente können hinzugefügt werden */
+
 
 label{
-color: whitesmoke;
+  font-size: 20px;
+  margin-bottom: 5px;
+  color: whitesmoke;
+}
+
+.PlayerOneInput{
+  padding-top: 20%;
+}
+
+input{
+  height: 35px;
+  margin-left: 20px;
+  margin-right: 20px;
+  font-size: medium;
+}
+
+
+.buttons {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-basis: 50%;
+  flex-wrap: wrap;
+  border-radius: 30px;
+
+}
+
+p {
+  padding: 10px 20px;
+  font-size: 20px;
+  background-color: #39c51f;
+  color: white;
+  border: none;
+  height: 10%;
+  width: 15%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+  border-radius: 30px;
+}
+
+.PlayerOneInput,
+.PlayerTwoInput {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 20px;
+  background-color: #c16d33;
+  color: white;
+  border: none;
+  cursor: pointer;
+  height: 10%;
+  width: 15%;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+button:hover {
+  background-color: #12d91f;
 }
 
 .game-window {
