@@ -50,7 +50,7 @@ export default class GameScene extends Scene {
         this.playerOneShip = new Ship(
             this.BLOCK_WIDTH,
             8 * this.BLOCK_WIDTH,
-            this.BLOCK_WIDTH,
+            this.BLOCK_WIDTH*0.9,
             this.name1
         );
         this.playerOneShip.build1();
@@ -60,7 +60,7 @@ export default class GameScene extends Scene {
             this.playerTwoShip = new Ship(
                 this.BLOCK_WIDTH,
                 8 * this.BLOCK_WIDTH,
-                this.BLOCK_WIDTH,
+                this.BLOCK_WIDTH*0.9,
                 this.name2
             );
 
@@ -91,13 +91,13 @@ export default class GameScene extends Scene {
 
         if (stage.asteroids) {
             for (const asteroid of stage.asteroids) {
-                this.createAsteroid(asteroid.x, asteroid.y, asteroid.size, asteroid.speed);
+                this.createAsteroid(asteroid.x, asteroid.y, this.BLOCK_WIDTH, asteroid.speed);
             }
         }
 
         if (stage.randomSize !== undefined) {
             for (const rnd of stage.randomSize) {
-                let size = Math.random() * (this.BLOCK_WIDTH - 20) + 20
+                let size = Math.random() * (this.BLOCK_WIDTH - this.BLOCK_WIDTH/2) + this.BLOCK_WIDTH/2
                 this.createAsteroid(rnd.x, rnd.y, size, rnd.speed);
             }
         }
