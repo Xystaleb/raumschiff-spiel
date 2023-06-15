@@ -8,7 +8,6 @@ export default class Projectile extends GameObject {
     build() {
         this.element = document.createElement('div');
         this.element.className = 'projectile';
-
         super.build();
     }
 }
