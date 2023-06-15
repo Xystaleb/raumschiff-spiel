@@ -44,7 +44,6 @@ export default class GameScene extends Scene {
         this.components = [];
         this.gameObjects = [];
 
-        console.log(this.singlePlayer)
 
         // register eventhandlers
         document.addEventListener("keydown", this.handleKeyDown.bind(this));
@@ -54,7 +53,7 @@ export default class GameScene extends Scene {
         this.playerOneShip = new Ship(
             this.BLOCK_WIDTH,
             8 * this.BLOCK_WIDTH,
-            this.BLOCK_WIDTH*0.9,
+            this.BLOCK_WIDTH*0.45,
             this.name1
         );
         this.playerOneShip.build1();
@@ -64,15 +63,14 @@ export default class GameScene extends Scene {
             this.playerTwoShip = new Ship(
                 this.BLOCK_WIDTH,
                 8 * this.BLOCK_WIDTH,
-                this.BLOCK_WIDTH*0.9,
+                this.BLOCK_WIDTH*0.45,
                 this.name2
             );
 
             this.playerTwoShip.build2();
             this.gameObjects.push(this.playerTwoShip);
         }
-        console.log(this.playerOneShip.name)
-        console.log(this.name)
+
         await this.initStage();
         super.build();
     }
@@ -159,7 +157,7 @@ export default class GameScene extends Scene {
             await this.nextLevel();
         // Spiel-Loop wiederholen
         if (!this.sceneState.gameOver)
-           setTimeout(() => {requestAnimationFrame(this.loop.bind(this))},1000/60) ;
+           setTimeout(() => {requestAnimationFrame(this.loop.bind(this))},1000/150) ;
     }
 
     checkEvents() {
@@ -259,7 +257,7 @@ export default class GameScene extends Scene {
         // überprüfen der player projectiles
         player.projectiles.forEach((projectile, idx) => {
             if (projectile.x <= this.view.offsetWidth) {
-                projectile.x += 5;
+                projectile.x += 10;
             } else {
                 projectilesToDelete.push(idx);
             }
@@ -352,8 +350,6 @@ export default class GameScene extends Scene {
                 var elementRect = current.element.getBoundingClientRect();
                 if (player.intersect(elementRect)) {
                     // Kollision zwischen Raumschiff und Gegner
-                    console.log("boom")
-                    console.log(player.x, player.y, elementRect.x, elementRect.y)
                     this.endGame();
                 }
             }
@@ -374,7 +370,6 @@ export default class GameScene extends Scene {
                         projectilesToDelete.push(projectileIdx);
                         asteroidsToDelete.push(asteroidIdx);
                         player.highscore += 1;
-                        console.log(player.highscore)
                         return;
                     }
                 }

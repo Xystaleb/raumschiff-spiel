@@ -70,14 +70,16 @@ tbody:nth-child(odd) td{
 }
 /* Weitere Stile und Anpassungen für andere Elemente können hinzugefügt werden */
 
+label{
+color: whitesmoke;
+}
 
 .game-window {
   width: 1920px;
   height: 1080px;
-  background-image: linear-gradient(rgba(0, 255, 0, .7) .1em, transparent .1em), linear-gradient(90deg, rgba(0, 255, 0, .7) .1em, transparent .1em);
-  background-size: 3em 3em;
+  background-image: url("https://images.unsplash.com/photo-1502134249126-9f3755a50d78?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80");
+  background-size: 100% 100%;
 }
-
 .space {
   background-color: black;
   width: 1280px;

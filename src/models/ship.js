@@ -2,7 +2,7 @@ import GameObject from "./game-object.js";
 
 export default class Ship extends GameObject {
   constructor(x, y, sidelength, name){
-    super(x, y, sidelength, sidelength)
+    super(x, y, sidelength*2, sidelength)
     this.projectiles = [];
     this.canShoot = true;
     this.score = 0;
