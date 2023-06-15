@@ -1,9 +1,9 @@
-import Leaderboard from "../models/leaderboard.js";
-import LeaderboardService from "../services/leaderboard-service.js";
-import Scene from "./scene.js";
+import Leaderboard from '../models/leaderboard.js'
+import LeaderboardService from '../services/leaderboard-service.js'
+import Scene from './scene.js'
 
 export default class EndGameScene extends Scene {
-    /**
+  /**
      * This is a constructor function that initializes the view, playerOne, playerTwo, and singleplayer
      * boolean for a game.
      * @param view - It is a reference to the view object that will be used to display the game interface.
@@ -15,58 +15,58 @@ export default class EndGameScene extends Scene {
      * `false`. It is used to determine whether the game is a singleplayer game or a multiplayer game. If
      * the value is `true`, it means the game is a singleplayer game, and if the
      */
-    constructor(view, playerOne, playerTwo, boolean) {
-        super(view);
-        this.playerOne = playerOne;
-        this.playerTwo = playerTwo;
-        this.singleplayer = boolean;
-    }
+  constructor (view, playerOne, playerTwo, boolean) {
+    super(view)
+    this.playerOne = playerOne
+    this.playerTwo = playerTwo
+    this.singleplayer = boolean
+  }
 
-    /**
+  /**
      * The function builds the end game screen, displays the highscore, creates a leaderboard entry, and
      * allows the player to start a new game.
      */
-    async build() {
-        // Stoppe das Spiel, z.B. indem du den gameLoop beendest oder den Interval für die Gegnererzeugung stoppst
-        // Zeige den Highscore an
+  async build () {
+    // Stoppe das Spiel, z.B. indem du den gameLoop beendest oder den Interval für die Gegnererzeugung stoppst
+    // Zeige den Highscore an
 
-        const leaderboardService = new LeaderboardService(
-            {
-                "url": "http://45.133.9.157:3000"
-            }
-        );
+    const leaderboardService = new LeaderboardService(
+      {
+        url: 'http://45.133.9.157:3000'
+      }
+    )
 
-        if (this.singleplayer) {
-            var scoreElement = document.createElement('div');
-            scoreElement.className = 'score';
-            scoreElement.innerHTML = 'Game Over! Dein Score: ' + this.playerOne.score;
+    if (this.singleplayer) {
+      var scoreElement = document.createElement('div')
+      scoreElement.className = 'score'
+      scoreElement.innerHTML = 'Game Over! Dein Score: ' + this.playerOne.score
 
-            // insert score
-            await leaderboardService.createLeaderboardEntry("test1", 10000);
-        } else {
-            var scoreElement = document.createElement('div');
-            scoreElement.className = 'score';
-            scoreElement.innerHTML = 'Game Over! <br>Player One Score: ' + this.playerOne.score + '<br>Player Two Score: ' + this.playerTwo.score;
+      // insert score
+      await leaderboardService.createLeaderboardEntry('test1', 10000)
+    } else {
+      var scoreElement = document.createElement('div')
+      scoreElement.className = 'score'
+      scoreElement.innerHTML = 'Game Over! <br>Player One Score: ' + this.playerOne.score + '<br>Player Two Score: ' + this.playerTwo.score
 
-            // insert score
-            await leaderboardService.createLeaderboardEntry("test2", (this.playerTwo.score + 1) * 10000);
-        }
-
-        var reloadButton = document.createElement('button');
-        reloadButton.textContent = 'New Game!';
-        reloadButton.addEventListener('click', function () {
-            location.reload();
-        });
-
-        scoreElement.appendChild(reloadButton);
-        this.components.push(scoreElement);
-
-        const entries = await leaderboardService.getLeaderboard();
-        const leaderboard = new Leaderboard(entries);
-        leaderboard.build();
-
-        this.registerComponent(leaderboard.element);
-
-        super.build();
+      // insert score
+      await leaderboardService.createLeaderboardEntry('test2', (this.playerTwo.score + 1) * 10000)
     }
+
+    const reloadButton = document.createElement('button')
+    reloadButton.textContent = 'New Game!'
+    reloadButton.addEventListener('click', function () {
+      location.reload()
+    })
+
+    scoreElement.appendChild(reloadButton)
+    this.components.push(scoreElement)
+
+    const entries = await leaderboardService.getLeaderboard()
+    const leaderboard = new Leaderboard(entries)
+    leaderboard.build()
+
+    this.registerComponent(leaderboard.element)
+
+    super.build()
+  }
 }
