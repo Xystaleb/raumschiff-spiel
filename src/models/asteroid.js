@@ -9,8 +9,12 @@ export default class Asteroid extends GameObject {
   build () {
     this.element = document.createElement('div')
     // this.element.className = 'asteroid';
-    const randomColor = Math.floor(Math.random() * 16777215).toString(16)
+    const randomColor = Math.floor(Math.random() * 16777214).toString(16)
     this.element.style.backgroundColor = '#' + randomColor
+    console.log(this.element.style.backgroundColor)
+    if (this.element.style.backgroundColor===""){
+      this.element.style.backgroundColor="red"
+    }
     this.element.style.borderRadius = '50%'
     super.build()
   }
