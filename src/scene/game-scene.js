@@ -11,7 +11,6 @@ export default class GameScene extends Scene {
         super(view);
         this.BLOCK_WIDTH=view.offsetHeight/16
         this.singlePlayer = boolean; // boolean zum übergeben ob multiplayer, oder singleplayer
-        this.ratio = view.offsetWidth / view.offsetHeight;
         this.sceneState = {
             stage: 1,
             currentStage: undefined,
@@ -51,7 +50,7 @@ export default class GameScene extends Scene {
         this.playerOneShip = new Ship(
             this.BLOCK_WIDTH,
             8 * this.BLOCK_WIDTH,
-            this.ratio,
+            this.BLOCK_WIDTH,
             this.name1
         );
         this.playerOneShip.build1();
@@ -61,7 +60,7 @@ export default class GameScene extends Scene {
             this.playerTwoShip = new Ship(
                 this.BLOCK_WIDTH,
                 8 * this.BLOCK_WIDTH,
-                this.ratio,
+                this.BLOCK_WIDTH,
                 this.name2
             );
 
@@ -138,6 +137,7 @@ export default class GameScene extends Scene {
         if (!this.singlePlayer) {
             this.checkProjectileCollision(this.playerTwoShip);
         }
+        
         //next level Marker bewegen
         this.moveFinish();
         // Überprüfen von gegnerKollision mit dem Schiff (zweiter aufruf falls es einen zweiten spieler gibt)
@@ -152,7 +152,7 @@ export default class GameScene extends Scene {
             await this.nextLevel();
         // Spiel-Loop wiederholen
         if (!this.sceneState.gameOver)
-            requestAnimationFrame(this.loop.bind(this));
+           setTimeout(() => {requestAnimationFrame(this.loop.bind(this))},1000/60) ;
     }
 
     checkEvents() {
